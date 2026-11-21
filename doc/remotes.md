@@ -87,6 +87,8 @@ Raw recorded codes whose many different durations do not fit irlingo's symbols a
 
 Remotes using Sony's protocol (SIRC) are converted to send every code at least 3 times, at 40 kHz unless the LIRC file gives a frequency. Sony devices ignore a code sent only once, as Sony's own remotes always repeat it, and their receivers are tuned to 40 kHz. Many LIRC files leave out `min_repeat` and the frequency, so LIRC itself sends such codes once at 38 kHz; a Sony TV tested with `sony/RM-ED011` switched on with 3 codes and ignored a single one. This concerns about 310 remotes, recognised by Sony's timing (a 2.4 ms header, 1.2 ms marks for 1 and 0.6 ms marks for 0), including universal remotes sending Sony codes.
 
+Remotes using RCA's protocol are converted to use 58 kHz, and Philips RC5 and RC6 remotes 36 kHz, unless the LIRC file gives a frequency: receivers are tuned to their protocol's carrier, and LIRC uses 38 kHz for files that give none. RCA's protocol is recognised by its timing (4 ms header mark and space, 0.5 ms marks followed by 2 ms spaces for 1 and 1 ms for 0), RC5 and RC6 by LIRC's encoding flags. This concerns 31 RCA and 444 RC5 and RC6 remotes; for RCA, whose carrier is far from 38 kHz, it can make the difference between working and not.
+
 ## Deriving a remote from recorded codes
 
 [tools/ir2irlingo.py](../tools/ir2irlingo.py) builds a remote from recorded codes and the settings each was sent for. It is made for air conditioners and similar remotes that send all settings in every code, but works for any remote whose codes use pulse distance or pulse width coding. It needs only Python 3.

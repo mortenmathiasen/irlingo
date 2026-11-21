@@ -1,7 +1,7 @@
 {
     "description": "Toshiba_G83C0008A110 (LIRC remote)",
     "source": {"lirc-remotes": "remotes/toshiba/G83C0008A110.lircd.conf", "remote": "Toshiba_G83C0008A110", "converter": "tools/lirc2irlingo.py 1.1"},
-    "frequency": 38000,
+    "frequency": 36000,
     "dutycycle": 0.5,
     "transmitter": {"outpin": 17},
     "symboldefinitions": {

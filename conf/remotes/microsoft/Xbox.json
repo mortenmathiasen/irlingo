@@ -1,7 +1,7 @@
 {
     "description": "Microsoft_Xbox (LIRC remote)",
     "source": {"lirc-remotes": "remotes/microsoft/Xbox.lircd.conf", "remote": "Microsoft_Xbox", "converter": "tools/lirc2irlingo.py 1.1"},
-    "frequency": 38000,
+    "frequency": 58000,
     "dutycycle": 0.5,
     "transmitter": {"outpin": 17},
     "symboldefinitions": {

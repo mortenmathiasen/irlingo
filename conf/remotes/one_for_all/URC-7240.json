@@ -1,7 +1,7 @@
 {
     "description": "One4All_URC-7240 (LIRC remote)",
     "source": {"lirc-remotes": "remotes/one_for_all/URC-7240.lircd.conf", "remote": "One4All_URC-7240", "converter": "tools/lirc2irlingo.py 1.1"},
-    "frequency": 38000,
+    "frequency": 36000,
     "dutycycle": 0.5,
     "transmitter": {"outpin": 17},
     "symboldefinitions": {

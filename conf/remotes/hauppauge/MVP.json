@@ -1,7 +1,7 @@
 {
     "description": "Hauppauge_MVP (LIRC remote)",
     "source": {"lirc-remotes": "remotes/hauppauge/MVP.lircd.conf", "remote": "Hauppauge_MVP", "converter": "tools/lirc2irlingo.py 1.1"},
-    "frequency": 38000,
+    "frequency": 36000,
     "dutycycle": 0.5,
     "transmitter": {"outpin": 17},
     "symboldefinitions": {

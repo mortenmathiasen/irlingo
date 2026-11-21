@@ -1,7 +1,7 @@
 {
     "description": "Philips_N9201PD (LIRC remote)",
     "source": {"lirc-remotes": "remotes/philips/N9201PD.lircd.conf", "remote": "Philips_N9201PD", "converter": "tools/lirc2irlingo.py 1.1"},
-    "frequency": 38000,
+    "frequency": 36000,
     "dutycycle": 0.5,
     "transmitter": {"outpin": 17},
     "symboldefinitions": {

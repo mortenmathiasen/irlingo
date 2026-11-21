@@ -1,7 +1,7 @@
 {
     "description": "Grundig-M38C (LIRC remote)",
     "source": {"lirc-remotes": "remotes/grundig/M38-C.lircd.conf", "remote": "Grundig-M38C", "converter": "tools/lirc2irlingo.py 1.1"},
-    "frequency": 38000,
+    "frequency": 36000,
     "dutycycle": 0.5,
     "transmitter": {"outpin": 17},
     "symboldefinitions": {

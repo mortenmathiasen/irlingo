@@ -1,7 +1,7 @@
 {
     "description": "Philips_RC_25271 (LIRC remote)",
     "source": {"lirc-remotes": "remotes/philips/RC25271.lircd.conf", "remote": "Philips_RC_25271", "converter": "tools/lirc2irlingo.py 1.1"},
-    "frequency": 38000,
+    "frequency": 36000,
     "dutycycle": 0.5,
     "transmitter": {"outpin": 17},
     "symboldefinitions": {

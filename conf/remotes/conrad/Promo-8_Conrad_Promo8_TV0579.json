@@ -1,7 +1,7 @@
 {
     "description": "Conrad_Promo8_TV0579 (LIRC remote)",
     "source": {"lirc-remotes": "remotes/conrad/Promo-8.lircd.conf", "remote": "Conrad_Promo8_TV0579", "converter": "tools/lirc2irlingo.py 1.1"},
-    "frequency": 38000,
+    "frequency": 36000,
     "dutycycle": 0.5,
     "transmitter": {"outpin": 17},
     "symboldefinitions": {

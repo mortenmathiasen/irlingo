@@ -1,7 +1,7 @@
 {
     "description": "Genentech_Supera_Color (LIRC remote)",
     "source": {"lirc-remotes": "remotes/geniatech/Supera_Color.lircd.conf", "remote": "Genentech_Supera_Color", "converter": "tools/lirc2irlingo.py 1.1"},
-    "frequency": 38000,
+    "frequency": 36000,
     "dutycycle": 0.5,
     "transmitter": {"outpin": 17},
     "symboldefinitions": {

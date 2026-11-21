@@ -1,7 +1,7 @@
 {
     "description": "Kingman_12_in_1 (LIRC remote)",
     "source": {"lirc-remotes": "remotes/kingman/12in1_336.lircd.conf", "remote": "Kingman_12_in_1", "converter": "tools/lirc2irlingo.py 1.1"},
-    "frequency": 38000,
+    "frequency": 36000,
     "dutycycle": 0.5,
     "transmitter": {"outpin": 17},
     "symboldefinitions": {

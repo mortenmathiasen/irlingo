@@ -581,7 +581,7 @@ class SonyCorrection(unittest.TestCase):
         sony = remote(SONY)
         result, _ = L.convert_remote(sony)
         self.assertEqual(40000, result["frequency"])
-        corrected = L.sony_corrected(sony)
+        corrected = L.protocol_corrected(sony)
         self.assertEqual(3, headers(L.send_once(corrected, corrected.codes[0])))
         # The file itself is unchanged, and LIRC's encoder sends one frame
         self.assertEqual(0, sony.min_repeat)
@@ -591,13 +591,87 @@ class SonyCorrection(unittest.TestCase):
         sony = remote(SONY.replace("  gap", "  frequency 38000\n  min_repeat 4\n  gap"))
         result, _ = L.convert_remote(sony)
         self.assertEqual(38000, result["frequency"])
-        corrected = L.sony_corrected(sony)
+        corrected = L.protocol_corrected(sony)
         self.assertEqual(5, headers(L.send_once(corrected, corrected.codes[0])))
 
     def test_other_remotes_unchanged(self):
         nec = remote(NEC)
-        self.assertIs(nec, L.sony_corrected(nec))
+        self.assertIs(nec, L.protocol_corrected(nec))
         result, _ = L.convert_remote(nec)
+        self.assertEqual(38000, result["frequency"])
+
+
+RCA = """
+begin remote
+  name  RCA
+  bits  24
+  flags SPACE_ENC
+  header 4000 4000
+  one     500 2000
+  zero    500 1000
+  ptrail  500
+  gap   8000
+  begin codes
+    KEY_POWER 0xF0E01F
+  end codes
+end remote
+"""
+
+RC5 = """
+begin remote
+  name  RC5
+  bits  13
+  flags RC5|CONST_LENGTH
+  one   889 889
+  zero  889 889
+  gap   113792
+  begin codes
+    KEY_POWER 0x100C
+  end codes
+end remote
+"""
+
+RC6 = """
+begin remote
+  name  RC6
+  bits  21
+  flags RC6|CONST_LENGTH
+  header 2666 889
+  one   444 444
+  zero  444 444
+  pre_data_bits 0
+  gap   106000
+  toggle_bit 5
+  begin codes
+    KEY_POWER 0x0C
+  end codes
+end remote
+"""
+
+
+class CarrierCorrection(unittest.TestCase):
+    def test_rca_58khz(self):
+        rca = remote(RCA)
+        self.assertTrue(L.is_rca(rca))
+        self.assertFalse(L.is_sony(rca))
+        result, _ = L.convert_remote(rca)
+        self.assertEqual(58000, result["frequency"])
+
+    def test_philips_36khz(self):
+        for text in (RC5, RC6):
+            result, _ = L.convert_remote(remote(text))
+            self.assertEqual(36000, result["frequency"])
+
+    def test_given_frequency_kept(self):
+        for text in (RCA, RC5):
+            given = remote(text.replace("  gap", "  frequency 38000\n  gap", 1))
+            self.assertIs(given, L.protocol_corrected(given))
+            result, _ = L.convert_remote(given)
+            self.assertEqual(38000, result["frequency"])
+
+    def test_no_frequency_change_for_nec(self):
+        self.assertFalse(L.is_rca(remote(NEC)))
+        result, _ = L.convert_remote(remote(NEC))
         self.assertEqual(38000, result["frequency"])
 
 

@@ -1,7 +1,7 @@
 {
     "description": "Technisat_FBPVR335A (LIRC remote)",
     "source": {"lirc-remotes": "remotes/technisat/FBPVR335A.lircd.conf", "remote": "Technisat_FBPVR335A", "converter": "tools/lirc2irlingo.py 1.1"},
-    "frequency": 38000,
+    "frequency": 36000,
     "dutycycle": 0.5,
     "transmitter": {"outpin": 17},
     "symboldefinitions": {

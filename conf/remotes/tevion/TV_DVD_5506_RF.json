@@ -1,7 +1,7 @@
 {
     "description": "Tevion_TV_DVD_5506_RF (LIRC remote)",
     "source": {"lirc-remotes": "remotes/tevion/TV_DVD_5506_RF.lircd.conf", "remote": "Tevion_TV_DVD_5506_RF", "converter": "tools/lirc2irlingo.py 1.1"},
-    "frequency": 38000,
+    "frequency": 36000,
     "dutycycle": 0.5,
     "transmitter": {"outpin": 17},
     "symboldefinitions": {

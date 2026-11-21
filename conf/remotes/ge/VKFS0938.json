@@ -1,7 +1,7 @@
 {
     "description": "GE_VKFS0938 (LIRC remote)",
     "source": {"lirc-remotes": "remotes/ge/VKFS0938.lircd.conf", "remote": "GE_VKFS0938", "converter": "tools/lirc2irlingo.py 1.1"},
-    "frequency": 38000,
+    "frequency": 58000,
     "dutycycle": 0.5,
     "transmitter": {"outpin": 17},
     "symboldefinitions": {

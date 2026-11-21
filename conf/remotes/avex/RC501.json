@@ -1,7 +1,7 @@
 {
     "description": "AVEX-RC501 (LIRC remote)",
     "source": {"lirc-remotes": "remotes/avex/RC501.lircd.conf", "remote": "AVEX-RC501", "converter": "tools/lirc2irlingo.py 1.1"},
-    "frequency": 38000,
+    "frequency": 36000,
     "dutycycle": 0.5,
     "transmitter": {"outpin": 17},
     "symboldefinitions": {

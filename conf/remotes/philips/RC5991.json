@@ -1,7 +1,7 @@
 {
     "description": "RC5991 (LIRC remote)",
     "source": {"lirc-remotes": "remotes/philips/RC5991.lircd.conf", "remote": "RC5991", "converter": "tools/lirc2irlingo.py 1.1"},
-    "frequency": 38000,
+    "frequency": 36000,
     "dutycycle": 0.5,
     "transmitter": {"outpin": 17},
     "symboldefinitions": {

@@ -1,7 +1,7 @@
 {
     "description": "Pinnacle_300i (LIRC remote)",
     "source": {"lirc-remotes": "remotes/pinnacle_systems/RC1144201_00.lircd.conf", "remote": "Pinnacle_300i", "converter": "tools/lirc2irlingo.py 1.1"},
-    "frequency": 38000,
+    "frequency": 36000,
     "dutycycle": 0.5,
     "transmitter": {"outpin": 17},
     "symboldefinitions": {

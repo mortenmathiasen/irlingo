@@ -1,7 +1,7 @@
 {
     "description": "T-Online_S100 (LIRC remote)",
     "source": {"lirc-remotes": "remotes/t-online/S100.lircd.conf", "remote": "T-Online_S100", "converter": "tools/lirc2irlingo.py 1.1"},
-    "frequency": 38000,
+    "frequency": 36000,
     "dutycycle": 0.5,
     "transmitter": {"outpin": 17},
     "symboldefinitions": {

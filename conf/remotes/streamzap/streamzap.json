@@ -1,7 +1,7 @@
 {
     "description": "Streamzap_PC_Remote (LIRC remote)",
     "source": {"lirc-remotes": "remotes/streamzap/streamzap.lircd.conf", "remote": "Streamzap_PC_Remote", "converter": "tools/lirc2irlingo.py 1.1"},
-    "frequency": 38000,
+    "frequency": 36000,
     "dutycycle": 0.5,
     "transmitter": {"outpin": 17},
     "symboldefinitions": {

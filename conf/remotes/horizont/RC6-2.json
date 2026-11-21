@@ -1,7 +1,7 @@
 {
     "description": "HORIZONT_RC6-2 (LIRC remote)",
     "source": {"lirc-remotes": "remotes/horizont/RC6-2.lircd.conf", "remote": "HORIZONT_RC6-2", "converter": "tools/lirc2irlingo.py 1.1"},
-    "frequency": 38000,
+    "frequency": 36000,
     "dutycycle": 0.5,
     "transmitter": {"outpin": 17},
     "symboldefinitions": {

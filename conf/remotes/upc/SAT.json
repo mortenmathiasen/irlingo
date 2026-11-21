@@ -1,7 +1,7 @@
 {
     "description": "UPC_SAT (LIRC remote)",
     "source": {"lirc-remotes": "remotes/upc/SAT.lircd.conf", "remote": "UPC_SAT", "converter": "tools/lirc2irlingo.py 1.1"},
-    "frequency": 38000,
+    "frequency": 36000,
     "dutycycle": 0.5,
     "transmitter": {"outpin": 17},
     "symboldefinitions": {

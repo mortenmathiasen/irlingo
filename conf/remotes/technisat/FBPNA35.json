@@ -1,7 +1,7 @@
 {
     "description": "TechniSat_FBPNA35 (LIRC remote)",
     "source": {"lirc-remotes": "remotes/technisat/FBPNA35.lircd.conf", "remote": "TechniSat_FBPNA35", "converter": "tools/lirc2irlingo.py 1.1"},
-    "frequency": 38000,
+    "frequency": 36000,
     "dutycycle": 0.5,
     "transmitter": {"outpin": 17},
     "symboldefinitions": {

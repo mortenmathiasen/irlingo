@@ -1,7 +1,7 @@
 {
     "description": "Philips_Gold_BOX (LIRC remote)",
     "source": {"lirc-remotes": "remotes/philips/Gold_BOX.lircd.conf", "remote": "Philips_Gold_BOX", "converter": "tools/lirc2irlingo.py 1.1"},
-    "frequency": 38000,
+    "frequency": 36000,
     "dutycycle": 0.5,
     "transmitter": {"outpin": 17},
     "symboldefinitions": {

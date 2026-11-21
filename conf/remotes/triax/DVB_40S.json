@@ -1,7 +1,7 @@
 {
     "description": "TRIAX_DVB_40S (LIRC remote)",
     "source": {"lirc-remotes": "remotes/triax/DVB_40S.lircd.conf", "remote": "TRIAX_DVB_40S", "converter": "tools/lirc2irlingo.py 1.1"},
-    "frequency": 38000,
+    "frequency": 36000,
     "dutycycle": 0.5,
     "transmitter": {"outpin": 17},
     "symboldefinitions": {

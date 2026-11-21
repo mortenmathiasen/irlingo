@@ -1,7 +1,7 @@
 {
     "description": "HP (LIRC remote)",
     "source": {"lirc-remotes": "remotes/hp/tx1000.lircd.conf", "remote": "HP", "converter": "tools/lirc2irlingo.py 1.1"},
-    "frequency": 38000,
+    "frequency": 36000,
     "dutycycle": 0.5,
     "transmitter": {"outpin": 17},
     "symboldefinitions": {

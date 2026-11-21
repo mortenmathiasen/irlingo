@@ -1,7 +1,7 @@
 {
     "description": "H+H_8in1_RC5 (LIRC remote)",
     "source": {"lirc-remotes": "remotes/harting_helling/H+H_8in1.lircd.conf", "remote": "H+H_8in1_RC5", "converter": "tools/lirc2irlingo.py 1.1"},
-    "frequency": 38000,
+    "frequency": 36000,
     "dutycycle": 0.5,
     "transmitter": {"outpin": 17},
     "symboldefinitions": {

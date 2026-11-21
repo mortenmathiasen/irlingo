@@ -1,7 +1,7 @@
 {
     "description": "fr731vcd (LIRC remote)",
     "source": {"lirc-remotes": "remotes/philips/FR731.lircd.conf", "remote": "fr731vcd", "converter": "tools/lirc2irlingo.py 1.1"},
-    "frequency": 38000,
+    "frequency": 36000,
     "dutycycle": 0.5,
     "transmitter": {"outpin": 17},
     "symboldefinitions": {

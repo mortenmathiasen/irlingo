@@ -1,7 +1,7 @@
 {
     "description": "URC22B-7 (LIRC remote)",
     "source": {"lirc-remotes": "remotes/nse/URC22B-7.lircd.conf", "remote": "URC22B-7", "converter": "tools/lirc2irlingo.py 1.1"},
-    "frequency": 38000,
+    "frequency": 36000,
     "dutycycle": 0.5,
     "transmitter": {"outpin": 17},
     "symboldefinitions": {

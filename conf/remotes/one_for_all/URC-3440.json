@@ -1,7 +1,7 @@
 {
     "description": "OneForAll_URC-3440_VDR (LIRC remote)",
     "source": {"lirc-remotes": "remotes/one_for_all/URC-3440.lircd.conf", "remote": "OneForAll_URC-3440_VDR", "converter": "tools/lirc2irlingo.py 1.1"},
-    "frequency": 38000,
+    "frequency": 36000,
     "dutycycle": 0.5,
     "transmitter": {"outpin": 17},
     "symboldefinitions": {

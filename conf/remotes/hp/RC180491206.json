@@ -1,7 +1,7 @@
 {
     "description": "HP_RC1804912/06 (LIRC remote)",
     "source": {"lirc-remotes": "remotes/hp/RC180491206.lircd.conf", "remote": "HP_RC1804912/06", "converter": "tools/lirc2irlingo.py 1.1"},
-    "frequency": 38000,
+    "frequency": 36000,
     "dutycycle": 0.5,
     "transmitter": {"outpin": 17},
     "symboldefinitions": {

@@ -776,40 +776,67 @@ def expand(code, symbols):
     return out
 
 
+# Corrections for protocols whose devices need more than many LIRC files give.
 # Sony devices ignore a code sent fewer than 3 times, as their remotes always
-# repeat it; their receivers are tuned to 40 kHz
+# repeat it. Receivers are tuned to their protocol's carrier, which LIRC files
+# often leave out (LIRC then uses 38 kHz): Sony uses 40 kHz, RCA 58 kHz and
+# Philips (RC5, RC6) 36 kHz, as the protocols' documentation (SB-Projects,
+# IRMP, JP1 DecodeIR) gives them.
 SONY_MIN_REPEAT = 2
 SONY_FREQ = 40000
+RCA_FREQ = 58000
+PHILIPS_FREQ = 36000
+
+
+def _near(value, target):
+    return abs(value - target) <= 0.25 * target
 
 
 def is_sony(remote):
     """Whether the remote uses Sony's protocol (SIRC), by its timing: a 2.4 ms
     header mark, 1.2 ms marks for 1 and 0.6 ms marks for 0, all followed by
     0.6 ms spaces"""
-    def near(value, target):
-        return abs(value - target) <= 0.25 * target
-    return (not remote.raw and near(remote.phead, 2400) and near(remote.shead, 600)
-            and near(remote.pone, 1200) and near(remote.sone, 600)
-            and near(remote.pzero, 600) and near(remote.szero, 600))
+    return (not remote.raw and _near(remote.phead, 2400) and _near(remote.shead, 600)
+            and _near(remote.pone, 1200) and _near(remote.sone, 600)
+            and _near(remote.pzero, 600) and _near(remote.szero, 600))
 
 
-def sony_corrected(remote):
-    """A copy of a remote using Sony's protocol that sends every code at least
-    3 times, at 40 kHz unless its file gives a frequency. Other remotes are
-    returned unchanged. LIRC sends such codes as the file says, often only once,
-    which Sony devices ignore."""
-    if not is_sony(remote):
+def is_rca(remote):
+    """Whether the remote uses RCA's protocol, by its timing: a 4 ms header
+    mark and space, 0.5 ms marks followed by 2 ms spaces for 1 and 1 ms
+    spaces for 0"""
+    return (not remote.raw and _near(remote.phead, 4000) and _near(remote.shead, 4000)
+            and _near(remote.pone, 500) and _near(remote.sone, 2000)
+            and _near(remote.pzero, 500) and _near(remote.szero, 1000))
+
+
+def protocol_corrected(remote):
+    """A copy of a remote corrected for what its protocol's devices need, or
+    the remote itself when nothing needs correcting:
+    - Sony: every code at least 3 times, at 40 kHz
+    - RCA: 58 kHz
+    - Philips RC5 and RC6: 36 kHz
+    A frequency the file gives is kept. LIRC sends codes as the file says."""
+    if is_sony(remote):
+        min_repeat, freq = SONY_MIN_REPEAT, SONY_FREQ
+    elif is_rca(remote):
+        min_repeat, freq = 0, RCA_FREQ
+    elif not remote.raw and remote.protocol() in ("RC5", "RC6"):
+        min_repeat, freq = 0, PHILIPS_FREQ
+    else:
+        return remote
+    if remote.min_repeat >= min_repeat and (remote.freq_given or remote.freq == freq):
         return remote
     remote = copy.copy(remote)
-    remote.min_repeat = max(remote.min_repeat, SONY_MIN_REPEAT)
+    remote.min_repeat = max(remote.min_repeat, min_repeat)
     if not remote.freq_given:
-        remote.freq = SONY_FREQ
+        remote.freq = freq
     return remote
 
 
 def convert_remote(remote, source=None):
     """Return (irlingo_json_dict, warnings) or raise ConfigError."""
-    remote = sony_corrected(remote)
+    remote = protocol_corrected(remote)
     proto = remote.protocol()
     if not remote.has_timing():
         raise ConfigError("no timing: codes are receiver hardware scancodes")

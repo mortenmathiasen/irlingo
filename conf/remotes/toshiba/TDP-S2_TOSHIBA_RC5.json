@@ -1,7 +1,7 @@
 {
     "description": "TOSHIBA_RC5 (LIRC remote)",
     "source": {"lirc-remotes": "remotes/toshiba/TDP-S2.lircd.conf", "remote": "TOSHIBA_RC5", "converter": "tools/lirc2irlingo.py 1.1"},
-    "frequency": 38000,
+    "frequency": 36000,
     "dutycycle": 0.5,
     "transmitter": {"outpin": 17},
     "symboldefinitions": {

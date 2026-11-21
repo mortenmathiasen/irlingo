@@ -1,7 +1,7 @@
 {
     "description": "Tesla_32LCD70WDGHD (LIRC remote)",
     "source": {"lirc-remotes": "remotes/tesla/32LCD70WDGHD.lircd.conf", "remote": "Tesla_32LCD70WDGHD", "converter": "tools/lirc2irlingo.py 1.1"},
-    "frequency": 38000,
+    "frequency": 36000,
     "dutycycle": 0.5,
     "transmitter": {"outpin": 17},
     "symboldefinitions": {

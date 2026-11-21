@@ -1,7 +1,7 @@
 {
     "description": "RCA_RCU600RS (LIRC remote)",
     "source": {"lirc-remotes": "remotes/rca/RCU600RS.lircd.conf", "remote": "RCA_RCU600RS", "converter": "tools/lirc2irlingo.py 1.1"},
-    "frequency": 38000,
+    "frequency": 58000,
     "dutycycle": 0.5,
     "transmitter": {"outpin": 17},
     "symboldefinitions": {

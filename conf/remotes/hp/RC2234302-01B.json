@@ -1,7 +1,7 @@
 {
     "description": "HP_RC2234302/01B (LIRC remote)",
     "source": {"lirc-remotes": "remotes/hp/RC2234302-01B.lircd.conf", "remote": "HP_RC2234302/01B", "converter": "tools/lirc2irlingo.py 1.1"},
-    "frequency": 38000,
+    "frequency": 36000,
     "dutycycle": 0.5,
     "transmitter": {"outpin": 17},
     "symboldefinitions": {

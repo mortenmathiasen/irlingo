@@ -1,7 +1,7 @@
 {
     "description": "ENTONE_URC-4021ABA1-006-R (LIRC remote)",
     "source": {"lirc-remotes": "remotes/entone/URC-4021ABA1-006-R.lircd.conf", "remote": "ENTONE_URC-4021ABA1-006-R", "converter": "tools/lirc2irlingo.py 1.1"},
-    "frequency": 38000,
+    "frequency": 36000,
     "dutycycle": 0.5,
     "transmitter": {"outpin": 17},
     "symboldefinitions": {

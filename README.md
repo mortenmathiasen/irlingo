@@ -231,12 +231,13 @@ GitHub Actions runs the tests for all three backends, with AddressSanitizer and 
 
 ### Releases
 
-To release, update `VERSION` in `CMakeLists.txt`, commit, and push a matching tag:
+To release, update `VERSION` in `CMakeLists.txt`, commit, and push a matching signed tag (setting up a signing key is described in [Development](doc/development.md#releases)):
 ```
-git tag v3.2.0
-git push origin v3.2.0
+git commit -S -m "Release 3.2.0"
+git tag -s v3.2.0 -m "irlingo 3.2.0"
+git push origin master v3.2.0
 ```
-GitHub Actions then runs all tests, builds the packages for every Raspberry Pi architecture and the archive of all remotes (`irlingo-remotes-<version>.tar.gz`), and publishes them with checksums as a GitHub release.
+GitHub Actions then runs all tests, builds the packages for every Raspberry Pi architecture, the archive of all remotes (`irlingo-remotes-<version>.tar.gz`) and the API documentation (`irlingo-api-docs-<version>.tar.gz`), and publishes them with checksums as a GitHub release.
 
 ### Upgrading from PIIR 2.x
 

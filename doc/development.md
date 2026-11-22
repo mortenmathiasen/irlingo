@@ -152,9 +152,9 @@ workflow, followed by `tools/clang-tidy.py`. A separate workflow converts the LI
 
 Update `VERSION` in `CMakeLists.txt`, commit, and push a matching signed tag:
 ```
-git commit -S -m "Release 3.2.0"
-git tag -s v3.2.0 -m "irlingo 3.2.0"
-git push origin master v3.2.0
+git commit -S -m "Release 3.2.1"
+git tag -s v3.2.1 -m "irlingo 3.2.1"
+git push origin master v3.2.1
 ```
 
 GitHub Actions then runs all tests, builds the packages for every Raspberry Pi architecture, the archive of all remotes (`irlingo-remotes-<version>.tar.gz`) and the API documentation (`irlingo-api-docs-<version>.tar.gz`), and publishes them with checksums as a GitHub release.
@@ -174,4 +174,4 @@ and add the same public key to your GitHub account as a **signing key**
 `gh ssh-key add ~/.ssh/id_ed25519.pub --type signing`). To check a signature
 locally, list your key in an allowed signers file
 (`git config --global gpg.ssh.allowedSignersFile ~/.ssh/allowed_signers`) and
-run `git verify-tag v3.2.0`.
+run `git verify-tag v3.2.1`.

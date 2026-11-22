@@ -145,7 +145,9 @@ climate:
 ```
 
 For most remotes that is all: the mapping is guessed from the remote's
-features.
+features. That includes all of irlingo's air conditioner remotes, e.g.
+`daikin/hvac_daikin` or `mitsubishi/hvac_mitsubishi_fd`; see the
+[list](usage.md#setting-an-air-conditioner).
 
 | Home Assistant | Guessed from |
 |----------------|--------------|

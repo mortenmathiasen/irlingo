@@ -210,7 +210,8 @@ jobs:
           if-no-files-found: error
 
   # The API documentation (Doxygen, as ESPHome makes it), built with the
-  # code and attached to releases. Doxygen warnings fail the build.
+  # code, attached to releases and, from master, published on GitHub Pages.
+  # Doxygen warnings fail the build.
   docs:
     name: API documentation
     runs-on: ubuntu-24.04
@@ -240,6 +241,32 @@ jobs:
           name: irlingo-api-docs
           path: build/irlingo-api-docs-*.tar.gz
           if-no-files-found: error
+
+      # The HTML for GitHub Pages, from master only (see the pages job)
+      - uses: actions/upload-pages-artifact@v3
+        if: github.event_name == 'push' && github.ref == 'refs/heads/master'
+        with:
+          path: build/docs/api-docs
+
+  # Publish the API documentation of master on GitHub Pages:
+  # https://mortenmathiasen.github.io/irlingo/
+  pages:
+    name: Publish API documentation
+    if: github.event_name == 'push' && github.ref == 'refs/heads/master'
+    needs: docs
+    runs-on: ubuntu-24.04
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    concurrency:
+      group: pages
+      cancel-in-progress: false
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4
 
   esphome:
     name: ESPHome

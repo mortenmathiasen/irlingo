@@ -39,7 +39,7 @@ irlingo exits with status 0 once it has handed the code to the transmitter. It c
 
 ## Remote and feature errors
 
-**`Cannot find remote 'NAME'`** — no remote of that name in `conf/remotes/` below the current directory or in the installation directory. Check `irlingo --list | grep -i NAME`. The release packages contain only irlingo's own remotes: add others with `sudo irlingo-remotes add MANUFACTURER`, see [Managing remotes](remotes.md#adding-remotes-to-an-installation).
+**`Cannot find remote 'NAME'`** — no remote of that name in `conf/remotes/` below the current directory or in the installation directory. Check `irlingo --list | grep -i NAME`. The release packages contain only irlingo's own remotes, the 47 air conditioner remotes: add others with `sudo irlingo-remotes add MANUFACTURER`, see [Managing remotes](remotes.md#adding-remotes-to-an-installation).
 
 **`Cannot find remote 'hvac_daikin'`** (or another of the air conditioner remotes added in 3.3.0, see [Usage](usage.md#setting-an-air-conditioner)) — irlingo is older than 3.3.0. Install the current package, or copy the JSON file from [conf/remotes](../conf/remotes) and give its path to `--remote`.
 

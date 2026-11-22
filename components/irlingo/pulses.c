@@ -36,9 +36,10 @@ int irlingoBuildPulses(size_t sdDefCount, const symbolDefinition *sdDef, const c
   *count = 0;
   for (size_t i = 0; code[i]; i++) {
     const symbolDefinition *symdef = 0;
-    for (size_t j = 0; j < sdDefCount; j++)
+    for (size_t j = 0; j < sdDefCount; j++) {
       if (sdDef[j].symbol == code[i])
         symdef = &sdDef[j];
+    }
     if (!symdef) {
       log_fatal("Undefined symbol '%c'", code[i]);
       return 1;

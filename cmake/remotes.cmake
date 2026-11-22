@@ -13,7 +13,10 @@
 # irlingo-remotes-<version>.tar.gz for the irlingo-remotes tool.
 
 set(IRLINGO_REMOTES_DIR ${PROJECT_SOURCE_DIR}/conf/remotes)
-set(IRLINGO_NATIVE_REMOTES panasonic/hvac_panasonic nibe/hvac_nibe carrier/hvac_carrier_nqv)
+# irlingo's own remotes are the air conditioner remotes, named hvac_*.json
+file(GLOB IRLINGO_NATIVE_REMOTES RELATIVE ${IRLINGO_REMOTES_DIR} ${IRLINGO_REMOTES_DIR}/*/hvac_*.json)
+list(TRANSFORM IRLINGO_NATIVE_REMOTES REPLACE "\\.json$" "")
+list(SORT IRLINGO_NATIVE_REMOTES)
 set(IRLINGO_REMOTES "all" CACHE STRING
   "Remotes to install: all, native, none, or manufacturers, remotes and patterns below conf/remotes")
 

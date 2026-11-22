@@ -285,7 +285,7 @@ The command line options and remote files of PIIR 1.x still work. These things c
 * **Build system.** irlingo is built with CMake instead of autotools: `./autogen.sh && ./configure && make && sudo make install` becomes `cmake -B build && cmake --build build && sudo cmake --install build`. The default installation prefix is still `/usr/local`.
 * **Transmitter.** PIIR 1.x always used pigpio. PIIR 2 prefers the Linux kernel IR driver, which works on every Raspberry Pi including Pi 5, but needs `dtoverlay=gpio-ir-tx,gpio_pin=17` in `/boot/firmware/config.txt` (see [Compilation](#compilation)). The overlay sets the GPIO pin, so `outpin` in a remote file is not used by this backend. Without the overlay irlingo stops with `Cannot open /dev/lirc0`. To keep using pigpio and `outpin`, build with `-DIRLINGO_GPIO_BACKEND=pigpio` (this does not compile in release 2.0.0; use 2.1.0 or later).
 * **Exit codes and output.** On errors and after `--help`, PIIR 1.x aborted (exit code 134); PIIR 2 exits with 1. The `gpioWaveTxSend OK` line is only printed by the pigpio backend.
-* **Remote locations.** The remotes shipped with irlingo are in manufacturer directories, e.g. `conf/remotes/panasonic/hvac_panasonic.json`. Your own remotes directly in `conf/remotes/` are still found, and `--remote hvac_panasonic` still works. Release packages contain only irlingo's own remotes; add others with [irlingo-remotes](#choosing-the-remotes-of-an-installation).
+* **Remote locations.** The remotes shipped with irlingo are in manufacturer directories, e.g. `conf/remotes/panasonic/hvac_panasonic.json`. Your own remotes directly in `conf/remotes/` are still found, and `--remote hvac_panasonic` still works. Release packages contain only irlingo's own remotes, the 47 air conditioner remotes; add others with [irlingo-remotes](#choosing-the-remotes-of-an-installation).
 * **Plugins.** A remote now names its plugin, e.g. `"plugin": "hvac_panasonic"`, or defines its checksums in the remote file, see [Checksums](#checksums). Remote files with neither setting whose path contains `hvac_panasonic` still get the Panasonic checksum, as in PIIR 1.x.
 * **Codes sent.** PIIR 1.x only applied the last `--feature` given; PIIR 2 applies all of them, in the order of the remote file (see [How to use](#how-to-use)). For `hvac_panasonic`, `mode=FAN` now sends the fixed 27 degrees and `option=QUIET`, `option=8` and `option=10` override the fan speed and mode, as the original remote does. The same command can therefore send a different, correct code than PIIR 1.x.
 
@@ -389,6 +389,12 @@ A working example combining more features into the IR signal:
 sudo irlingo --remote hvac_panasonic --feature temperature=21 --feature mode=HEAT --feature option=AUTO --feature fan=AUTO --feature updown=HIGH --feature leftright=MIDDLE --verbose=DEBUG
 ```
 
+`hvac_panasonic` switches off with `mode=OFF`. The other air conditioner remotes have a separate `power` feature: give `power=ON` with every setting, and `power=OFF` to switch off. E.g. for a Daikin:
+```
+sudo irlingo --remote daikin/hvac_daikin --feature power=ON --feature mode=HEAT --feature temperature=21 --feature fan=AUTO --feature vertical=AUTO --feature horizontal=AUTO
+sudo irlingo --remote daikin/hvac_daikin --feature power=OFF
+```
+
 Features are applied in the order they appear in the remote's JSON file, not the order given on the command line, so a feature listed later in the file wins where two set the same bits. For `hvac_panasonic` this means `option=QUIET` and the frost protection `option=8` override the fan speed and mode, and `mode=FAN` sends the fixed 27 degrees the original remote uses. Giving the same feature twice uses the last value.
 
 If everything goes well the command prints nothing and exits with status 0 (the `pigpio` backend prints a line like `gpioWaveTxSend OK: 15897`). Add `--verbose=INFO` to see the code sent.
@@ -405,7 +411,7 @@ Remotes are JSON files in `conf/remotes/<manufacturer>/`, in the same structure 
 
 ### Choosing the remotes of an installation
 
-The release packages only contain irlingo's own remotes. Each release also has `irlingo-remotes-<version>.tar.gz` with all remotes, and the `irlingo-remotes` command installed with irlingo adds remotes from it to the installation. It downloads the archive of the installed version, or uses one given with `--archive`:
+The release packages only contain irlingo's own remotes, the 47 air conditioner remotes named `hvac_*`. Each release also has `irlingo-remotes-<version>.tar.gz` with all remotes, and the `irlingo-remotes` command installed with irlingo adds remotes from it to the installation. It downloads the archive of the installed version, or uses one given with `--archive`:
 ```
 irlingo-remotes available sony              # remotes in the archive containing "sony"
 sudo irlingo-remotes add sony               # every Sony remote

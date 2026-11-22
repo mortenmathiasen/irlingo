@@ -4,8 +4,11 @@ Status: phase 0 done, apart from a transmission to the air conditioner (see
 "Phase 0 results"); phase 1 done (the portable core is in `components/irlingo/`,
 with `pulses.c` and `loadConfigString()`); phase 2 done (the component with the
 `irlingo.send` action, see [esphome.md](esphome.md)); phase 3 done (button and
-climate platforms); phase 4 CI done (`tests/esphome/check.sh` in CI), the
-release is next.
+climate platforms); phase 4 done (`tests/esphome/check.sh` in CI, released in
+irlingo 3.1.0). Since 3.3.0 CI also compiles the component for the ESP32-S3,
+-C3, -C6, ESP8266 and RP2040 (see [Supported chips](esphome.md#supported-chips)),
+and the climate platform maps all 47 air conditioner remotes without
+configuration. Phase 5 is open.
 
 ## Goal
 
@@ -132,8 +135,9 @@ In this repository; it changes nothing for the Raspberry Pi version.
 
 ### 5. Later, as needed
 
-- Convert remotes to compact C tables at build time, to save memory and to
-  support ESP8266.
+- Convert remotes to compact C tables at build time, to save memory, above all
+  on the ESP8266: the component compiles for it since 3.3.0, but parsing
+  remotes on the device leaves room for only one small remote.
 - Bit-packed tables for remotes made with `ir2irlingo --fallback`: about 400 KB
   instead of 3.8 MB for samsung_fjm.
 - Turning the configuration into handles.
@@ -200,8 +204,10 @@ Still open:
    (a `core/` subfolder does not work).
 2. Scope of the first release: phases 1-4 (the action, buttons and climate), or
    phases 1-2 alone, so the action can be tried early?
-3. Targets: ESP32 only at first (recommended). ESP8266 has too little memory to
-   parse remotes on the device.
+3. Targets: decided, ESP32 first. Since 3.3.0 CI also compiles for the
+   ESP32-S3, -C3, -C6, ESP8266 and RP2040; only the classic ESP32 is tested on
+   hardware, and the ESP8266 has too little memory for more than one small
+   remote.
 
 ## Risks
 

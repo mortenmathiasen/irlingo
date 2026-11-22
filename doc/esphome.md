@@ -1,7 +1,8 @@
 # irlingo on ESPHome
 
-irlingo can run on an ESP32 as an [ESPHome](https://esphome.io/) external
-component. The remotes are the same JSON files as on the Raspberry Pi, and the
+irlingo can run on an ESP32, or another chip ESPHome supports (see
+[Supported chips](#supported-chips)), as an [ESPHome](https://esphome.io/)
+external component. The remotes are the same JSON files as on the Raspberry Pi, and the
 same C code encodes them, so a remote sends the same code on both.
 
 Since irlingo 3.1.0. The component sends codes from automations (`irlingo.send`),

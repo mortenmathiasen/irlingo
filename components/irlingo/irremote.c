@@ -74,11 +74,12 @@ static JSON_Object *featureObject(const irRemote *remote, size_t index) {
 
 int irRemoteFeatureIndex(const irRemote *remote, const char *name, size_t *index) {
   size_t count = irRemoteFeatureCount(remote);
-  for (size_t i = 0; i < count; i++)
+  for (size_t i = 0; i < count; i++) {
     if (strcmp(name, irRemoteFeatureName(remote, i)) == 0) {
       *index = i;
       return 1;
     }
+  }
   return 0;
 }
 
@@ -95,9 +96,10 @@ int irRemoteHasFeature(const irRemote *remote, const char *name, const char *val
   if (!irRemoteFeatureIndex(remote, name, &index))
     return 0;
   size_t count = irRemoteFeatureValueCount(remote, index);
-  for (size_t i = 0; i < count; i++)
+  for (size_t i = 0; i < count; i++) {
     if (strcmp(value, irRemoteFeatureValueName(remote, index, i)) == 0)
       return 1;
+  }
   return 0;
 }
 
@@ -169,17 +171,19 @@ static void applyOverlay(const char *overlay, char *code, size_t codeLength) {
   size_t length = strlen(overlay);
   if (length > codeLength)
     log_warn("Feature code '%s' is longer than the template (%zu symbols)", overlay, codeLength);
-  for (size_t i = 0; i < length && i < codeLength; i++)
+  for (size_t i = 0; i < length && i < codeLength; i++) {
     if (overlay[i] != ' ')
       code[i] = overlay[i];
+  }
 }
 
 // The requested value of a feature, NULL when it is not requested
 static const char *requestedValue(const featureT *features, size_t count, const char *name) {
   const char *value = 0;
-  for (size_t i = 0; i < count; i++)
+  for (size_t i = 0; i < count; i++) {
     if (features[i].name && features[i].value && strcmp(features[i].name, name) == 0)
       value = features[i].value;
+  }
   return value;
 }
 
@@ -246,6 +250,9 @@ int irRemoteEncode(irRemote *remote, const featureT *features, int toggled, char
     log_error("Code of %s needs %zu symbols, room for %zu", remote->name, templateLength, size ? size - 1 : 0);
     return 1;
   }
+  // The template fits, checked above; memcpy_s (C11 Annex K) is in neither
+  // glibc nor newlib
+  // NOLINTNEXTLINE(clang-analyzer-security.insecureAPI.DeprecatedOrUnsafeBufferHandling)
   memcpy(code, templateCode, templateLength + 1);
   if (!features)
     return 0;

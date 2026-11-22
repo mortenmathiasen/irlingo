@@ -36,9 +36,10 @@ static int readFlag(const JSON_Object *spec, const char *name, int *value) {
 // Read unit number index of width bits
 static unsigned readUnit(const char *code, const size_t *bitPos, long index, int width, int msbFirst, char one) {
   unsigned value = 0;
-  for (int i = 0; i < width; i++)
+  for (int i = 0; i < width; i++) {
     if (code[bitPos[index * width + i]] == one)
       value |= 1u << (msbFirst ? width - 1 - i : i);
+  }
   return value;
 }
 
@@ -121,9 +122,10 @@ static int readResultUnits(const JSON_Object *spec, unitList *list) {
 
 static unsigned reflect(unsigned value, int width) {
   unsigned result = 0;
-  for (int i = 0; i < width; i++)
+  for (int i = 0; i < width; i++) {
     if (value & (1u << i))
       result |= 1u << (width - 1 - i);
+  }
   return result;
 }
 
@@ -159,9 +161,10 @@ static int applyChecksum(const JSON_Object *spec, char *code, size_t *bitPos) {
   static const char *typeNames[] = {"sum", "xor", "popcount", "crc"};
   const char *type = json_object_get_string(spec, "type");
   int kind = -1;
-  for (int i = 0; type && i < 4; i++)
+  for (int i = 0; type && i < 4; i++) {
     if (strcmp(type, typeNames[i]) == 0)
       kind = i;
+  }
   if (kind < 0) {
     log_fatal("Checksum \"type\" must be \"sum\", \"xor\", \"popcount\" or \"crc\"");
     return 1;
@@ -243,20 +246,23 @@ static int applyChecksum(const JSON_Object *spec, char *code, size_t *bitPos) {
   for (size_t k = 0; k < atCount && !result; k++) {
     if (unitAt(&at, k) > last)
       last = unitAt(&at, k);
-    for (size_t j = 0; j < k; j++)
+    for (size_t j = 0; j < k; j++) {
       if (unitAt(&at, j) == unitAt(&at, k)) {
         log_fatal("Checksum writes %s %ld twice", unitName, unitAt(&at, k));
         result = 1;
       }
-    for (size_t i = 0; i < count && !result; i++)
+    }
+    for (size_t i = 0; i < count && !result; i++) {
       if (unitAt(&units, i) == unitAt(&at, k)) {
         log_fatal("Checksum %s %ld is one of the %ss it covers", unitName, unitAt(&at, k), unitName);
         result = 1;
       }
+    }
   }
-  for (size_t i = 0; i < count; i++)
+  for (size_t i = 0; i < count; i++) {
     if (unitAt(&units, i) > last)
       last = unitAt(&units, i);
+  }
   if (!result && last >= unitCount) {
     log_fatal("Checksum uses %s %ld, but the code has %ld %ss", unitName, last, unitCount, unitName);
     result = 1;
@@ -278,6 +284,8 @@ static int applyChecksum(const JSON_Object *spec, char *code, size_t *bitPos) {
         value += bitCount(u);
         break;
       default:
+        // Not swapped: a unit of width bits enters a CRC of resultWidth bits
+        // NOLINTNEXTLINE(readability-suspicious-call-argument)
         value = crcUnit(value, u, width, poly, resultWidth, reflected, mask);
         break;
     }

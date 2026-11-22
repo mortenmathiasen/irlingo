@@ -112,11 +112,11 @@ int writeToggleState(const char *stateFile, const char *remote, int state) {
 
   int result = 0;
   rewind(f);
-  if (fwrite(content, 1, size, f) != size || fflush(f) || ftruncate(fd, (off_t)size)) {
+  if (fwrite(content, 1, size, f) != size || fflush(f) || ftruncate(fd, (off_t) size)) {
     log_warn("Cannot store the toggle state in %s: %s", stateFile, strerror(errno));
     result = -1;
   }
   free(content);
-  fclose(f);   // also releases the lock
+  fclose(f);  // also releases the lock
   return result;
 }

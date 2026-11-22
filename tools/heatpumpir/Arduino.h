@@ -12,9 +12,9 @@
 #define PROGMEM
 #define PSTR(s) (s)
 #define F(s) (s)
-#define pgm_read_byte(addr) (*(const uint8_t *)(addr))
-#define pgm_read_byte_near(addr) (*(const uint8_t *)(addr))
-#define pgm_read_word(addr) (*(const uint16_t *)(addr))
+#define pgm_read_byte(addr) (*(const uint8_t *) (addr))
+#define pgm_read_byte_near(addr) (*(const uint8_t *) (addr))
+#define pgm_read_word(addr) (*(const uint16_t *) (addr))
 #define memcpy_P memcpy
 #define strcmp_P strcmp
 #define strlen_P strlen

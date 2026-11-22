@@ -6,7 +6,7 @@
 
 #include "irremote.h"
 
-//Load configuration from file
+// Load configuration from file
 void loadConfig(const char *configfilepath);
 // Load configuration from JSON text, e.g. a remote built into firmware.
 // Like loadConfig(), a remote that cannot be parsed leaves the previous one
@@ -20,22 +20,20 @@ irRemote *loadedRemote(void);
 size_t getSymboldefinitionsCount();
 
 size_t getAllFeaturesCount();
-const char * getFeatureName(size_t index);
+const char *getFeatureName(size_t index);
 int getFeatureIndex(const char *featureName, size_t *index);
 
 size_t getFeatureValuesCount(size_t nameIndex);
-const char * getFeatureValueName(size_t nameIndex, size_t valueIndex);
+const char *getFeatureValueName(size_t nameIndex, size_t valueIndex);
 int hasFeatureNameAndValue(const char *featureName, const char *featureValue);
 
 void loadConfigSymbols(symbolDefinition configSymbols[]);
 void loadTemplateCode(const char **symbolString);
 // The code for these features (see irRemoteEncode()), allocated: free it
-void loadFeaturedCode(const featureT *features,
-		      char **featuredCode);
+void loadFeaturedCode(const featureT *features, char **featuredCode);
 int hasToggle();
-void loadToggledFeaturedCode(const featureT *features, int toggled,
-			     char **featuredCode);
-void loadOutPin(unsigned int *outPin);  //Output
+void loadToggledFeaturedCode(const featureT *features, int toggled, char **featuredCode);
+void loadOutPin(unsigned int *outPin);  // Output
 void loadDescription(const char **description);
 void loadDevice(const char **device);
 void loadPlugin(const char **plugin);

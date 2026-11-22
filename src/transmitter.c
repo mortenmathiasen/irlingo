@@ -10,63 +10,56 @@
 #include "log.h"
 #include "transmitter.h"
 
-int addPulse(bool high, uint32_t duration, gpioPulse_t *irSignal, unsigned int *pulseCount)
-{
-  if (duration==0)
+int addPulse(bool high, uint32_t duration, gpioPulse_t *irSignal, unsigned int *pulseCount) {
+  if (duration == 0)
     return 0;
   int index = *pulseCount;
 
-  log_trace("%s %d", high?"On ":"Off", duration);
+  log_trace("%s %d", high ? "On " : "Off", duration);
 
-  if (index > 0 && irSignal[index-1].high == high)
-    {
-      irSignal[index-1].usDelay += duration;
+  if (index > 0 && irSignal[index - 1].high == high) {
+    irSignal[index - 1].usDelay += duration;
+  } else {
+    if (index >= MAX_PULSES) {
+      log_fatal("Code needs more than %d pulses", MAX_PULSES);
+      return 1;
     }
-  else
-    {
-      if (index >= MAX_PULSES)
-        {
-          log_fatal("Code needs more than %d pulses", MAX_PULSES);
-          return 1;
-        }
-      irSignal[index].high = high;
-      irSignal[index].usDelay = duration;
-      (*pulseCount)++;
-    }
+    irSignal[index].high = high;
+    irSignal[index].usDelay = duration;
+    (*pulseCount)++;
+  }
   return 0;
 }
 
 // Generates a square wave for duration (microseconds) at frequency (Hz)
 // dutyCycle is a floating value between 0 and 1.
-int addMark(unsigned long frequency, double dutyCycle, unsigned long duration, gpioPulse_t *irSignal, unsigned int *pulseCount)
-{
+int addMark(unsigned long frequency, double dutyCycle, unsigned long duration, gpioPulse_t *irSignal,
+            unsigned int *pulseCount) {
   log_trace("Add mark   %d", duration);
-  double cycleLength = (double)1000000/frequency;
-  unsigned totalCycles = 0.5f+((double)(duration/cycleLength));
+  double cycleLength = (double) 1000000 / frequency;
+  unsigned totalCycles = 0.5f + ((double) (duration / cycleLength));
   unsigned long actualUsedDuration = 0;
   double calculatedUsedDuration = 0;
-  for (unsigned i = 0; i < totalCycles; i++)
-    {
-      calculatedUsedDuration += cycleLength;
-      unsigned long thisCycleDuration = 0.5f + calculatedUsedDuration-actualUsedDuration;
-      actualUsedDuration += thisCycleDuration;
+  for (unsigned i = 0; i < totalCycles; i++) {
+    calculatedUsedDuration += cycleLength;
+    unsigned long thisCycleDuration = 0.5f + calculatedUsedDuration - actualUsedDuration;
+    actualUsedDuration += thisCycleDuration;
 
-      // High pulse
-      unsigned onDuration = thisCycleDuration * dutyCycle;
-      if (addPulse(1, onDuration, irSignal, pulseCount))
-        return 1;
+    // High pulse
+    unsigned onDuration = thisCycleDuration * dutyCycle;
+    if (addPulse(1, onDuration, irSignal, pulseCount))
+      return 1;
 
-      // Low pulse
-      unsigned offDuration = thisCycleDuration - onDuration;
-      if (addPulse(0, offDuration, irSignal, pulseCount))
-        return 1;
-    }
+    // Low pulse
+    unsigned offDuration = thisCycleDuration - onDuration;
+    if (addPulse(0, offDuration, irSignal, pulseCount))
+      return 1;
+  }
   return 0;
 }
-		
+
 // Generates a low signal gap for duration, in microseconds, on GPIO pin outPin
-int addSpace(unsigned long duration, gpioPulse_t *irSignal, unsigned int *pulseCount)
-{
+int addSpace(unsigned long duration, gpioPulse_t *irSignal, unsigned int *pulseCount) {
   log_trace("Add space  %d", duration);
   return addPulse(0, duration, irSignal, pulseCount);
 }
@@ -80,17 +73,14 @@ unsigned long microtime() {
 // Open the GPIO chip holding Broadcom pin outPin and return the pin's line offset.
 // Raspberry Pi names the header lines "GPIO<n>" on every model, but the chip
 // holding them differs (gpiochip0 on Pi 1-4, gpiochip4 on Pi 5 with older kernels).
-struct gpiod_chip *openChipForPin(uint32_t outPin, unsigned int *offset)
-{
+struct gpiod_chip *openChipForPin(uint32_t outPin, unsigned int *offset) {
   char lineName[16];
   snprintf(lineName, sizeof(lineName), "GPIO%u", outPin);
 
   DIR *dir = opendir("/dev");
-  if (dir)
-  {
+  if (dir) {
     struct dirent *entry;
-    while ((entry = readdir(dir)))
-    {
+    while ((entry = readdir(dir))) {
       if (strncmp(entry->d_name, "gpiochip", 8))
         continue;
 
@@ -104,8 +94,7 @@ struct gpiod_chip *openChipForPin(uint32_t outPin, unsigned int *offset)
         continue;
 
       int lineOffset = gpiod_chip_get_line_offset_from_name(chip, lineName);
-      if (lineOffset >= 0)
-      {
+      if (lineOffset >= 0) {
         log_debug("Found %s on %s line %d", lineName, path, lineOffset);
         closedir(dir);
         *offset = lineOffset;
@@ -123,8 +112,7 @@ struct gpiod_chip *openChipForPin(uint32_t outPin, unsigned int *offset)
 }
 
 // Transmit generated wave using available library libgpiod (v2 API)
-int transmitWave(uint32_t outPin, gpioPulse_t *irSignal, unsigned int *pulseCount)
-{
+int transmitWave(uint32_t outPin, gpioPulse_t *irSignal, unsigned int *pulseCount) {
   unsigned int offset;
   int result = EXIT_FAILURE;
 
@@ -136,16 +124,14 @@ int transmitWave(uint32_t outPin, gpioPulse_t *irSignal, unsigned int *pulseCoun
 
   // get chip holding the output pin
   chip = openChipForPin(outPin, &offset);
-  if(!chip)
-  {
+  if (!chip) {
     log_error("gpiod_chip_open");
     goto cleanup;
   }
 
   // Setup output configuration with default value 0
   settings = gpiod_line_settings_new();
-  if(!settings)
-  {
+  if (!settings) {
     log_error("gpiod_line_settings_new");
     goto cleanup;
   }
@@ -153,15 +139,13 @@ int transmitWave(uint32_t outPin, gpioPulse_t *irSignal, unsigned int *pulseCoun
   gpiod_line_settings_set_output_value(settings, GPIOD_LINE_VALUE_INACTIVE);
 
   lineConfig = gpiod_line_config_new();
-  if(!lineConfig || gpiod_line_config_add_line_settings(lineConfig, &offset, 1, settings))
-  {
+  if (!lineConfig || gpiod_line_config_add_line_settings(lineConfig, &offset, 1, settings)) {
     log_error("gpiod_line_config_add_line_settings");
     goto cleanup;
   }
 
   requestConfig = gpiod_request_config_new();
-  if(!requestConfig)
-  {
+  if (!requestConfig) {
     log_error("gpiod_request_config_new");
     goto cleanup;
   }
@@ -169,111 +153,99 @@ int transmitWave(uint32_t outPin, gpioPulse_t *irSignal, unsigned int *pulseCoun
 
   // request output line for pin
   request = gpiod_chip_request_lines(chip, requestConfig, lineConfig);
-  if(!request)
-  {
+  if (!request) {
     log_error("gpiod_chip_request_lines");
     goto cleanup;
   }
 
   unsigned int i;
   unsigned long old_microtime, new_microtime;
-  for (i = 0, old_microtime=microtime(), new_microtime=old_microtime ;
-       i < *pulseCount ;
-       i++, old_microtime=new_microtime, new_microtime=microtime() ) {
-
+  for (i = 0, old_microtime = microtime(), new_microtime = old_microtime; i < *pulseCount;
+       i++, old_microtime = new_microtime, new_microtime = microtime()) {
     // Change value to next pulse signal
-    if(gpiod_line_request_set_value(request, offset,
-                                    irSignal[i].high ? GPIOD_LINE_VALUE_ACTIVE : GPIOD_LINE_VALUE_INACTIVE)) {
+    if (gpiod_line_request_set_value(request, offset,
+                                     irSignal[i].high ? GPIOD_LINE_VALUE_ACTIVE : GPIOD_LINE_VALUE_INACTIVE)) {
       log_error("gpiod_line_request_set_value");
       goto cleanup;
     }
 
     // Sleep until pulse is finished
-    long delay = (long)irSignal[i].usDelay-(long)(new_microtime-old_microtime);
+    long delay = (long) irSignal[i].usDelay - (long) (new_microtime - old_microtime);
     log_debug("Delay %ld", delay);
-    if(delay > 0 && usleep(delay)) {
-        log_error("usleep error");
-        goto cleanup;
+    if (delay > 0 && usleep(delay)) {
+      log_error("usleep error");
+      goto cleanup;
     }
-
   }
 
   // Ensure turn off IR led
-  if(gpiod_line_request_set_value(request, offset, GPIOD_LINE_VALUE_INACTIVE)) {
-        log_error("gpiod_line_request_set_value");
-        goto cleanup;
+  if (gpiod_line_request_set_value(request, offset, GPIOD_LINE_VALUE_INACTIVE)) {
+    log_error("gpiod_line_request_set_value");
+    goto cleanup;
   }
 
   result = EXIT_SUCCESS;
 
 cleanup:
-  if(request)
+  if (request)
     gpiod_line_request_release(request);
-  if(requestConfig)
+  if (requestConfig)
     gpiod_request_config_free(requestConfig);
-  if(lineConfig)
+  if (lineConfig)
     gpiod_line_config_free(lineConfig);
-  if(settings)
+  if (settings)
     gpiod_line_settings_free(settings);
-  if(chip)
+  if (chip)
     gpiod_chip_close(chip);
 
   return result;
 }
 
-int irSlingGeneric(uint32_t outPin,
-		   int frequency,
-		   double dutyCycle,
-		   size_t sdDefCount,
-		   symbolDefinition *sdDef,
-		   const char *code)
-{
-  if (outPin > 31)
-    {
-      // Invalid pin number
-      return 1;
-    }
+int irSlingGeneric(uint32_t outPin, int frequency, double dutyCycle, size_t sdDefCount, symbolDefinition *sdDef,
+                   const char *code) {
+  if (outPin > 31) {
+    // Invalid pin number
+    return 1;
+  }
 
   size_t codeLen = strlen(code);
 
   log_info("code length is %zu", codeLen);
   log_info("%s", code);
 
-  if (codeLen > MAX_COMMAND_SIZE)
-    {
-      log_fatal("Code length greater than %d", MAX_COMMAND_SIZE);
-      // Command is too big
-      return 1;
-    }
+  if (codeLen > MAX_COMMAND_SIZE) {
+    log_fatal("Code length greater than %d", MAX_COMMAND_SIZE);
+    // Command is too big
+    return 1;
+  }
 
   gpioPulse_t irSignal[MAX_PULSES];
   unsigned int pulseCount = 0;
 
   log_debug("Build pulses");
   size_t i = 0;
-  for (i = 0; i < codeLen; i++)
-    {
-      unsigned long markDuration = 0;
-      unsigned long spaceDuration = 0;
-      symbolDefinition *symdef = 0;
-      size_t j =  0;
-      for (j = 0 ; j<sdDefCount ; j++) {
-	if (sdDef[j].symbol==code[i]) {
-	  symdef = &sdDef[j];
-	  markDuration = symdef->markDuration;
-	  spaceDuration = symdef->spaceDuration;
-	}
+  for (i = 0; i < codeLen; i++) {
+    unsigned long markDuration = 0;
+    unsigned long spaceDuration = 0;
+    symbolDefinition *symdef = 0;
+    size_t j = 0;
+    for (j = 0; j < sdDefCount; j++) {
+      if (sdDef[j].symbol == code[i]) {
+        symdef = &sdDef[j];
+        markDuration = symdef->markDuration;
+        spaceDuration = symdef->spaceDuration;
       }
-      if (!symdef) {
-	log_fatal("Undefined symbol '%c'", code[i]);
-	return 1;
-      }
-
-      log_trace("Pulse %d", pulseCount);
-      if (addMark(frequency, dutyCycle, markDuration, irSignal, &pulseCount) ||
-          addSpace(spaceDuration, irSignal, &pulseCount))
-        return 1;
     }
+    if (!symdef) {
+      log_fatal("Undefined symbol '%c'", code[i]);
+      return 1;
+    }
+
+    log_trace("Pulse %d", pulseCount);
+    if (addMark(frequency, dutyCycle, markDuration, irSignal, &pulseCount) ||
+        addSpace(spaceDuration, irSignal, &pulseCount))
+      return 1;
+  }
 
   log_trace("pulse count is %i\n", pulseCount);
   // End Generate Code

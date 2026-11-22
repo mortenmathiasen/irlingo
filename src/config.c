@@ -25,9 +25,7 @@ static void useRemote(irRemote *remote, const char *path) {
 }
 
 void loadConfig(const char *configfilepath) {
-  if (CONFIGFILEPATH &&
-      configfilepath &&
-      strcmp(configfilepath,CONFIGFILEPATH)==0)
+  if (CONFIGFILEPATH && configfilepath && strcmp(configfilepath, CONFIGFILEPATH) == 0)
     return;
   useRemote(irRemoteParseFile(configfilepath), configfilepath);
 }
@@ -37,35 +35,23 @@ void loadConfigString(const char *json) {
   useRemote(irRemoteParse(json, "(text)"), 0);
 }
 
-int isConfigLoaded() {
-  return REMOTE != 0;
-}
+int isConfigLoaded() { return REMOTE != 0; }
 
-irRemote *loadedRemote(void) {
-  return REMOTE;
-}
+irRemote *loadedRemote(void) { return REMOTE; }
 
-size_t getSymboldefinitionsCount() {
-  return REMOTE ? irRemoteSymbolCount(REMOTE) : 0;
-}
+size_t getSymboldefinitionsCount() { return REMOTE ? irRemoteSymbolCount(REMOTE) : 0; }
 
-size_t getAllFeaturesCount() {
-  return REMOTE ? irRemoteFeatureCount(REMOTE) : 0;
-}
+size_t getAllFeaturesCount() { return REMOTE ? irRemoteFeatureCount(REMOTE) : 0; }
 
-const char * getFeatureName(size_t index) {
-  return REMOTE ? irRemoteFeatureName(REMOTE, index) : 0;
-}
+const char *getFeatureName(size_t index) { return REMOTE ? irRemoteFeatureName(REMOTE, index) : 0; }
 
 int getFeatureIndex(const char *featureName, size_t *index) {
   return REMOTE && irRemoteFeatureIndex(REMOTE, featureName, index);
 }
 
-size_t getFeatureValuesCount(size_t nameIndex) {
-  return REMOTE ? irRemoteFeatureValueCount(REMOTE, nameIndex) : 0;
-}
+size_t getFeatureValuesCount(size_t nameIndex) { return REMOTE ? irRemoteFeatureValueCount(REMOTE, nameIndex) : 0; }
 
-const char * getFeatureValueName(size_t nameIndex, size_t valueIndex) {
+const char *getFeatureValueName(size_t nameIndex, size_t valueIndex) {
   return REMOTE ? irRemoteFeatureValueName(REMOTE, nameIndex, valueIndex) : 0;
 }
 
@@ -78,17 +64,13 @@ void loadConfigSymbols(symbolDefinition configSymbols[]) {
     irRemoteSymbols(REMOTE, configSymbols);
 }
 
-void loadTemplateCode(const char **symbolString) {
-  *symbolString = REMOTE ? irRemoteTemplate(REMOTE) : 0;
-}
+void loadTemplateCode(const char **symbolString) { *symbolString = REMOTE ? irRemoteTemplate(REMOTE) : 0; }
 
 void loadFeaturedCode(const featureT *features, char **featuredCode) {
   loadToggledFeaturedCode(features, 0, featuredCode);
 }
 
-int hasToggle() {
-  return REMOTE && irRemoteHasToggle(REMOTE);
-}
+int hasToggle() { return REMOTE && irRemoteHasToggle(REMOTE); }
 
 void loadToggledFeaturedCode(const featureT *features, int toggled, char **featuredCode) {
   *featuredCode = 0;
@@ -102,37 +84,21 @@ void loadToggledFeaturedCode(const featureT *features, int toggled, char **featu
   }
 }
 
-void loadOutPin(unsigned int *outPin) {
-  *outPin = REMOTE ? irRemoteOutPin(REMOTE) : 0;
-}
+void loadOutPin(unsigned int *outPin) { *outPin = REMOTE ? irRemoteOutPin(REMOTE) : 0; }
 
-void loadDescription(const char **description) {
-  *description = REMOTE ? irRemoteDescription(REMOTE) : 0;
-}
+void loadDescription(const char **description) { *description = REMOTE ? irRemoteDescription(REMOTE) : 0; }
 
-void loadDevice(const char **device) {
-  *device = REMOTE ? irRemoteDevice(REMOTE) : 0;
-}
+void loadDevice(const char **device) { *device = REMOTE ? irRemoteDevice(REMOTE) : 0; }
 
-void loadPlugin(const char **plugin) {
-  *plugin = REMOTE ? irRemotePlugin(REMOTE) : 0;
-}
+void loadPlugin(const char **plugin) { *plugin = REMOTE ? irRemotePlugin(REMOTE) : 0; }
 
-void loadFrequency(int *frequency) {
-  *frequency = REMOTE ? irRemoteFrequency(REMOTE) : 0;
-}
+void loadFrequency(int *frequency) { *frequency = REMOTE ? irRemoteFrequency(REMOTE) : 0; }
 
-void loadDutyCycle(double *dutycycle) {
-  *dutycycle = REMOTE ? irRemoteDutyCycle(REMOTE) : 0;
-}
+void loadDutyCycle(double *dutycycle) { *dutycycle = REMOTE ? irRemoteDutyCycle(REMOTE) : 0; }
 
-const JSON_Array *loadChecksums(void) {
-  return REMOTE ? irRemoteChecksums(REMOTE) : 0;
-}
+const JSON_Array *loadChecksums(void) { return REMOTE ? irRemoteChecksums(REMOTE) : 0; }
 
-int hasVariants(void) {
-  return REMOTE && irRemoteHasVariants(REMOTE);
-}
+int hasVariants(void) { return REMOTE && irRemoteHasVariants(REMOTE); }
 
 int applyConfigChecksums(char *code) {
   const JSON_Array *checksums = loadChecksums();

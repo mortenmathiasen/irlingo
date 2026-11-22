@@ -1,5 +1,3 @@
-// An air conditioner remote as a climate entity: every change sends one code
-// with the features of the mode, the target temperature and the fan speed
 #pragma once
 
 #include <utility>
@@ -14,6 +12,8 @@
 
 namespace esphome::irlingo {
 
+/// An air conditioner remote as a climate entity: every change sends one code
+/// with the features of the mode, the target temperature and the fan speed
 class IrlingoClimate : public climate::Climate, public Component, public Parented<IrlingoRemote> {
  public:
   void add_mode_feature(climate::ClimateMode mode, const char *name, const char *value);
@@ -43,7 +43,7 @@ class IrlingoClimate : public climate::Climate, public Component, public Parente
   const char *fan_auto_{nullptr};
   std::vector<const char *> fan_custom_;
   std::vector<featureT> fixed_;
-  // The features of one code, room for all of them reserved in setup()
+  /// The features of one code, room for all of them reserved in setup()
   std::vector<featureT> values_;
 #ifdef USE_SENSOR
   sensor::Sensor *sensor_{nullptr};

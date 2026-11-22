@@ -18,6 +18,8 @@ extern "C" {
 
 namespace esphome::irlingo {
 
+/// An irlingo remote, built into the firmware as JSON text, sent through a
+/// remote_transmitter. The remote is parsed once in setup().
 class IrlingoRemote : public Component {
  public:
   void set_transmitter(remote_transmitter::RemoteTransmitterComponent *transmitter) {
@@ -58,6 +60,8 @@ class IrlingoRemote : public Component {
   ESPPreferenceObject toggle_pref_;
 };
 
+/// The irlingo.send action: sends a remote's code for feature values, which
+/// may be templates (lambdas)
 template<typename... Ts> class SendAction : public Action<Ts...>, public Parented<IrlingoRemote> {
  public:
   template<typename V> void add_feature(const char *name, V value) {

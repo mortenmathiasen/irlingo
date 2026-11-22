@@ -14,15 +14,15 @@ typedef struct {
   size_t count;
 } remoteListT;
 
-// List the remotes in the given directories. A name found in more than one
-// directory is listed once.
+/// List the remotes in the given directories. A name found in more than one
+/// directory is listed once.
 void listRemotes(const char *const dirs[], size_t dirCount, remoteListT *list);
 void freeRemoteList(remoteListT *list);
 
-// Find the file for a remote name. Returns the number of matching remotes:
-// 1 and the file path in *path (to be freed) when found, 0 when not found,
-// and more than 1 when a file name matches remotes in several directories;
-// their names are then returned in *matches (when not NULL).
+/// Find the file for a remote name. Returns the number of matching remotes:
+/// 1 and the file path in *path (to be freed) when found, 0 when not found,
+/// and more than 1 when a file name matches remotes in several directories;
+/// their names are then returned in *matches (when not NULL).
 size_t findRemote(const char *const dirs[], size_t dirCount, const char *name, char **path, remoteListT *matches);
 
 #endif

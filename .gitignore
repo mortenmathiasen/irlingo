@@ -83,5 +83,8 @@ dkms.conf
 __pycache__/
 *.py[cod]
 
+# API documentation from running doxygen directly
+/api-docs/
+
 # ESPHome builds (tests/esphome)
 .esphome/

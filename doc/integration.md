@@ -43,6 +43,14 @@ irlingo -r hvac_panasonic -f mode=HEAT -f temperature="$1" -f option=AUTO -f fan
      -f updown=AUTO -f leftright=AUTO
 ```
 
+`hvac_panasonic` switches off with `mode=OFF`. The other air conditioner remotes (see [Usage](usage.md#setting-an-air-conditioner)) have a separate `power` feature: give `power=ON` with every setting, and `power=OFF` to switch off. E.g. for a Daikin:
+
+```sh
+irlingo -r daikin/hvac_daikin -f power=ON -f mode=HEAT -f temperature=21 -f fan=AUTO \
+     -f vertical=AUTO -f horizontal=AUTO
+irlingo -r daikin/hvac_daikin -f power=OFF
+```
+
 ## Scheduled with cron or systemd timers
 
 Heat the summer house at 06:30 on weekdays, with `crontab -e`:

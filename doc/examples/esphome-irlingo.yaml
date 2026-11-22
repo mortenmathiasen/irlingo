@@ -15,7 +15,7 @@ esp32:
 logger:
 
 external_components:
-  - source: github://mortenmathiasen/irlingo@v3.2.1
+  - source: github://mortenmathiasen/irlingo@v3.3.0
     components: [irlingo]
 
 remote_transmitter:

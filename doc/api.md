@@ -11,7 +11,9 @@ The code is in three parts:
   feature values into a code, a string of symbols, `applyChecksums()`
   (`checksum.h`) and `applyRemotePlugin()` (`plugins.h`) finish it, and
   `irlingoBuildPulses()` (`pulses.h`) turns it into pulse and space durations.
-  Encoding allocates nothing, and the core uses nothing specific to Linux.
+  Encoding allocates nothing, and the core uses nothing specific to Linux: it
+  compiles for the ESP32 family, the ESP8266 and the RP2040 too (see
+  [Supported chips](https://github.com/mortenmathiasen/irlingo/blob/master/doc/esphome.md#supported-chips)).
 - **The ESPHome component** (`components/irlingo/`, C++): `esphome::irlingo::IrlingoRemote`
   sends a remote through ESPHome's `remote_transmitter`, with `SendAction`,
   `IrlingoButton` and `IrlingoClimate` on top of it.

@@ -144,7 +144,7 @@ It cannot handle: RC5/RC6 style (Manchester) coding, codes without a final stop 
 
 ## Air conditioners supported by arduino-heatpumpir
 
-The [arduino-heatpumpir](https://github.com/ToniA/arduino-heatpumpir) library knows the protocols of 46 air conditioner and heat pump models, and irlingo has a remote for each of them, e.g. `daikin/hvac_daikin` or `mitsubishi/hvac_mitsubishi_fd` (the list is in [Usage](usage.md#setting-an-air-conditioner)). Each remote's description names the library's model.
+The [arduino-heatpumpir](https://github.com/ToniA/arduino-heatpumpir) library knows the protocols of 46 air conditioner and heat pump models, and irlingo has a remote for each of them, e.g. `daikin/hvac_daikin` or `mitsubishi/hvac_mitsubishi_fd` (the list is in [Usage](usage.md#setting-an-air-conditioner)). Each remote's description names the library's model. The 44 derived remotes ship with irlingo since 3.3.0; before that, only `hvac_nibe` and `hvac_carrier_nqv` did.
 
 [tools/heatpumpir](../tools/heatpumpir) records the library's codes as captures, and ir2irlingo derived 44 of the remotes from them. To derive one again, e.g. after a change in the library, build the recorder against a checkout of the library (GPL-2.0, not part of irlingo):
 

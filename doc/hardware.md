@@ -156,6 +156,10 @@ circuit.
 
 ### Other chips
 
+Since irlingo 3.3.0. Only the classic ESP32 has been tested on hardware; the
+other chips compile in CI. Please
+[report](https://github.com/mortenmathiasen/irlingo/issues) how they work.
+
 | Chip | 5 V | Transmitter pin | Avoid |
 |------|-----|-----------------|-------|
 | ESP32-S3 | `5V` or `VIN` | `GPIO4` | GPIO 0, 3, 45 and 46 (boot), 19 and 20 (USB), 26 to 32 (flash; on modules with octal PSRAM also 33 to 37) |

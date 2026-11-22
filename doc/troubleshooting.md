@@ -41,6 +41,10 @@ irlingo exits with status 0 once it has handed the code to the transmitter. It c
 
 **`Cannot find remote 'NAME'`** — no remote of that name in `conf/remotes/` below the current directory or in the installation directory. Check `irlingo --list | grep -i NAME`. The release packages contain only irlingo's own remotes: add others with `sudo irlingo-remotes add MANUFACTURER`, see [Managing remotes](remotes.md#adding-remotes-to-an-installation).
 
+**`Cannot find remote 'hvac_daikin'`** (or another of the air conditioner remotes added in 3.3.0, see [Usage](usage.md#setting-an-air-conditioner)) — irlingo is older than 3.3.0. Install the current package, or copy the JSON file from [conf/remotes](../conf/remotes) and give its path to `--remote`.
+
+**`Unknown remote 'daikin/hvac_daikin'`** in ESPHome — `external_components` uses an older irlingo. Change the version after `@` to `v3.3.0` or newer, see [irlingo on ESPHome](esphome.md#configuration).
+
 **`Remote 'NAME' is ambiguous, use one of:`** — several manufacturers have a remote with that file name. Use the full name, e.g. `sony/RM-ED011`.
 
 **`No remotes found in ... or ...`** — no remotes are installed. Add some with `irlingo-remotes`, or run irlingo from a directory with a `conf/remotes/` subdirectory.

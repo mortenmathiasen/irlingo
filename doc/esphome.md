@@ -8,6 +8,10 @@ Since irlingo 3.1.0. The component sends codes from automations (`irlingo.send`)
 and gives Home Assistant buttons and air conditioner (climate) entities. See
 [the plan](esphome-plan.md) for what is next.
 
+irlingo 3.3.0 adds builds for the ESP32-S3, -C3, -C6, ESP8266 and RP2040 (see
+[Supported chips](#supported-chips)), and 44 more air conditioner remotes, 47
+in all, which the climate platform maps without configuration.
+
 - [Requirements](#requirements)
 - [Supported chips](#supported-chips)
 - [Configuration](#configuration)
@@ -83,7 +87,7 @@ The parts for irlingo:
 
 ```yaml
 external_components:
-  - source: github://mortenmathiasen/irlingo@v3.2.1
+  - source: github://mortenmathiasen/irlingo@v3.3.0
     components: [irlingo]
 
 remote_transmitter:

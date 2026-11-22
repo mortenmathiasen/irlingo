@@ -116,9 +116,27 @@ The commit that reformatted the code is in `.git-blame-ignore-revs`; to have
 `git blame` skip it locally, run
 `git config blame.ignoreRevsFile .git-blame-ignore-revs`.
 
+## API documentation
+
+The C and C++ code is documented with Doxygen, as ESPHome's is: comments
+written `///` before a declaration in a header become the API reference,
+whose front page is `doc/api.md`. The `Doxyfile` has ESPHome's settings; it
+needs Doxygen 1.12 or newer (Ubuntu packages 1.9.8, so CI downloads Doxygen's
+own build). A broken documentation comment fails the build, while undocumented
+code is fine.
+
+```
+cmake -B build -DIRLINGO_DOCS=ON    # or build the target docs on its own
+cmake --build build                 # HTML in build/docs/api-docs
+```
+
+`cmake --build build --target docs_archive` packs the HTML into
+`irlingo-api-docs-<version>.tar.gz`, which CI builds on every run and attaches
+to releases.
+
 ## Continuous integration
 
-GitHub Actions runs the tests for all three backends, with AddressSanitizer and UndefinedBehaviorSanitizer, measures coverage, runs the tests of the `armv6`, `armv7` and `aarch64` builds under qemu, checks the formatting with clang-format, and runs
+GitHub Actions runs the tests for all three backends, with AddressSanitizer and UndefinedBehaviorSanitizer, measures coverage, runs the tests of the `armv6`, `armv7` and `aarch64` builds under qemu, checks the formatting with clang-format, builds the API documentation, and runs
 `tests/esphome/check.sh --compile` with the ESPHome version given in the
 workflow, followed by `tools/clang-tidy.py`. A separate workflow converts the LIRC database again with `tools/lirc2irlingo.py` and fails if `conf/remotes` differs from the result, and compares the converter with LIRC's own `irsimsend`.
 

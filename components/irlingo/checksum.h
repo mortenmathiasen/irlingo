@@ -34,10 +34,10 @@
 //             are skipped (default none)
 // Checksums are applied in order, so a later one may cover an earlier one.
 
-// Apply the checksums to code. bitPos is room for the positions of the bits
-// in the code, strlen(code) + 1 entries; it allocates nothing. Returns 0 on
-// success, 1 when a checksum is invalid or does not fit the code (logged;
-// code may be partly changed).
+/// Apply the checksums to code. bitPos is room for the positions of the bits
+/// in the code, strlen(code) + 1 entries; it allocates nothing. Returns 0 on
+/// success, 1 when a checksum is invalid or does not fit the code (logged;
+/// code may be partly changed).
 int applyChecksums(const JSON_Array *checksums, char *code, size_t *bitPos);
 
 #endif

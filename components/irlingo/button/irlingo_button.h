@@ -1,4 +1,3 @@
-// A button sending an irlingo remote's code for fixed feature values
 #pragma once
 
 #include <vector>
@@ -8,6 +7,7 @@
 
 namespace esphome::irlingo {
 
+/// A button sending an irlingo remote's code for fixed feature values
 class IrlingoButton : public button::Button, public Parented<IrlingoRemote> {
  public:
   void add_feature(const char *name, const char *value) { this->features_.push_back(featureT{name, value}); }

@@ -1,0 +1,68 @@
+# Doxyfile 1.12.0
+#
+# The API documentation of irlingo's C and C++ code, with the settings
+# ESPHome's Doxyfile uses (github.com/esphome/esphome). Settings not listed
+# have Doxygen's defaults; `doxygen -x Doxyfile` shows what differs.
+#
+# Built by `cmake --build build --target docs` (or with -DIRLINGO_DOCS=ON as
+# part of the build), which sets IRLINGO_VERSION and IRLINGO_DOCS_DIR; run
+# directly, `doxygen` writes api-docs/ here.
+
+PROJECT_NAME           = irlingo
+PROJECT_NUMBER         = $(IRLINGO_VERSION)
+PROJECT_BRIEF          = "Transmit IR signals like remote controls do"
+OUTPUT_DIRECTORY       = $(IRLINGO_DOCS_DIR)
+
+# Comments: /// or /** */ before a declaration; the first sentence is the brief
+JAVADOC_AUTOBRIEF      = YES
+JAVADOC_BANNER         = NO
+OPTIMIZE_OUTPUT_FOR_C  = YES
+MARKDOWN_SUPPORT       = YES
+
+# Everything is listed, documented or not; static functions stay out
+EXTRACT_ALL            = YES
+EXTRACT_PRIVATE        = NO
+EXTRACT_STATIC         = NO
+GENERATE_TODOLIST      = NO
+GENERATE_TESTLIST      = NO
+GENERATE_BUGLIST       = NO
+GENERATE_DEPRECATEDLIST= NO
+
+# Undocumented code is fine, broken documentation comments are not
+QUIET                  = YES
+WARNINGS               = YES
+WARN_IF_UNDOCUMENTED   = NO
+WARN_IF_DOC_ERROR      = YES
+WARN_IF_INCOMPLETE_DOC = YES
+WARN_NO_PARAMDOC       = NO
+WARN_AS_ERROR          = FAIL_ON_WARNINGS
+WARN_FORMAT            = "$file:$line: $text"
+
+# The portable core, the ESPHome component and the Linux parts. Code copied
+# from other projects (parson, rxi's log.c) is left out.
+INPUT                  = doc/api.md \
+                         components/irlingo \
+                         src
+FILE_PATTERNS          = *.c \
+                         *.cpp \
+                         *.h
+RECURSIVE              = YES
+EXCLUDE                = components/irlingo/parson.c \
+                         components/irlingo/parson.h \
+                         components/irlingo/log.h \
+                         src/log.c
+USE_MDFILE_AS_MAINPAGE = doc/api.md
+SOURCE_BROWSER         = YES
+
+GENERATE_HTML          = YES
+HTML_OUTPUT            = api-docs
+HTML_COLORSTYLE        = AUTO_LIGHT
+HTML_DYNAMIC_MENUS     = YES
+HTML_CODE_FOLDING      = YES
+HTML_COPY_CLIPBOARD    = YES
+GENERATE_TREEVIEW      = NO
+SEARCHENGINE           = YES
+GENERATE_LATEX         = NO
+
+ENABLE_PREPROCESSING   = NO
+HAVE_DOT               = NO

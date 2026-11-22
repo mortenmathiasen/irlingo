@@ -6,15 +6,15 @@
 
 #include "irremote.h"
 
-// Load configuration from file
+/// Load configuration from file
 void loadConfig(const char *configfilepath);
-// Load configuration from JSON text, e.g. a remote built into firmware.
-// Like loadConfig(), a remote that cannot be parsed leaves the previous one
-// loaded.
+/// Load configuration from JSON text, e.g. a remote built into firmware.
+/// Like loadConfig(), a remote that cannot be parsed leaves the previous one
+/// loaded.
 void loadConfigString(const char *json);
 void unloadConfig();
 int isConfigLoaded();
-// The loaded remote, NULL when none is
+/// The loaded remote, NULL when none is
 irRemote *loadedRemote(void);
 
 size_t getSymboldefinitionsCount();
@@ -29,7 +29,7 @@ int hasFeatureNameAndValue(const char *featureName, const char *featureValue);
 
 void loadConfigSymbols(symbolDefinition configSymbols[]);
 void loadTemplateCode(const char **symbolString);
-// The code for these features (see irRemoteEncode()), allocated: free it
+/// The code for these features (see irRemoteEncode()), allocated: free it
 void loadFeaturedCode(const featureT *features, char **featuredCode);
 int hasToggle();
 void loadToggledFeaturedCode(const featureT *features, int toggled, char **featuredCode);
@@ -39,14 +39,14 @@ void loadDevice(const char **device);
 void loadPlugin(const char **plugin);
 void loadFrequency(int *frequency);
 void loadDutyCycle(double *dutycycle);
-// The "checksums" array of the definition (the remote or one of its
-// variants) the last loadFeaturedCode() used, NULL when it has none (see
-// checksum.h)
+/// The "checksums" array of the definition (the remote or one of its
+/// variants) the last loadFeaturedCode() used, NULL when it has none (see
+/// checksum.h)
 const JSON_Array *loadChecksums(void);
 int hasVariants(void);
 
-// Apply the checksums of the loaded remote, if it has any (see
-// applyChecksums())
+/// Apply the checksums of the loaded remote, if it has any (see
+/// applyChecksums())
 int applyConfigChecksums(char *code);
 
 #endif

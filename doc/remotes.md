@@ -12,7 +12,7 @@
 
 irlingo has more than 3000 remotes from over 500 manufacturers in [conf/remotes](../conf/remotes):
 
-- **irlingo's own remotes**, made for irlingo: `panasonic/hvac_panasonic`, `nibe/hvac_nibe` and `carrier/hvac_carrier_nqv`. The release packages contain these.
+- **irlingo's own air conditioner remotes**, named `hvac_*`: `panasonic/hvac_panasonic`, reverse engineered from the remote, and 46 remotes for the models of [arduino-heatpumpir](#air-conditioners-supported-by-arduino-heatpumpir), listed in [Usage](usage.md#setting-an-air-conditioner). The release packages contain these.
 - **Remotes converted from the [LIRC remote database](https://sourceforge.net/p/lirc-remotes/code/ci/master/tree/remotes)**, for TVs, receivers, set-top boxes, projectors and much more. Each release has them in `irlingo-remotes-<version>.tar.gz`.
 
 If your device is not among them, make a remote:
@@ -144,7 +144,9 @@ It cannot handle: RC5/RC6 style (Manchester) coding, codes without a final stop 
 
 ## Air conditioners supported by arduino-heatpumpir
 
-The [arduino-heatpumpir](https://github.com/ToniA/arduino-heatpumpir) library knows the protocols of 46 air conditioner and heat pump models. [tools/heatpumpir](../tools/heatpumpir) records its codes as captures, so ir2irlingo can make irlingo remotes of them. The library (GPL-2.0) is not part of irlingo; build the recorder against a checkout of it:
+The [arduino-heatpumpir](https://github.com/ToniA/arduino-heatpumpir) library knows the protocols of 46 air conditioner and heat pump models, and irlingo has a remote for each of them, e.g. `daikin/hvac_daikin` or `mitsubishi/hvac_mitsubishi_fd` (the list is in [Usage](usage.md#setting-an-air-conditioner)). Each remote's description names the library's model.
+
+[tools/heatpumpir](../tools/heatpumpir) records the library's codes as captures, and ir2irlingo derived 44 of the remotes from them. To derive one again, e.g. after a change in the library, build the recorder against a checkout of the library (GPL-2.0, not part of irlingo):
 
 ```
 git clone https://github.com/ToniA/arduino-heatpumpir.git
@@ -158,7 +160,7 @@ tools/ir2irlingo.py gree.jsonl --check gree-check.jsonl -o conf/remotes/gree/hva
 
 `heatpumpir_capture MODEL [COUNT [SEED]]` records the base code, every single change and COUNT random combinations; `heatpumpir_capture MODEL all` records every combination. Models that send the time of day get 00:00.
 
-ir2irlingo derives a remote that sends the same codes as the library for 44 of the models (from 1000 to 3000 random combinations, checked against 1000 others). The remaining two, Nibe and Carrier NQV, are in irlingo as `nibe/hvac_nibe` and `carrier/hvac_carrier_nqv`, written from the library's source.
+ir2irlingo derives a remote that sends the same codes as the library for 44 of the models. irlingo's remotes were derived from arduino-heatpumpir 1.0.42 with 1000 random combinations (seed 1; 3000 for `hisense_aud`) and checked against 1000 others (seed 2), each with 30 test vectors. The remaining two, Nibe and Carrier NQV, are written from the library's source as `nibe/hvac_nibe` and `carrier/hvac_carrier_nqv`.
 
 ## Writing a remote by hand
 

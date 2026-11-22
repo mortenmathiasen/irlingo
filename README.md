@@ -71,7 +71,7 @@ The [documentation](doc/README.md) has a guide for each step:
 ### IR-protocol
 
 To control an IR-receiver you need to know the IR-signals to transmit to it. Either, you can:
-* Use the protocol definitions that exists already inside irlingo's remote folder [conf/remotes](https://github.com/mortenmathiasen/irlingo/tree/master/conf/remotes): more than 3000 remotes from over 500 manufacturers, most of them converted from the [LIRC remote database](https://sourceforge.net/p/lirc-remotes/code/ci/master/tree/remotes), see [Remotes](#remotes)
+* Use the protocol definitions that exists already inside irlingo's remote folder [conf/remotes](https://github.com/mortenmathiasen/irlingo/tree/master/conf/remotes): more than 3000 remotes from over 500 manufacturers, most of them converted from the [LIRC remote database](https://sourceforge.net/p/lirc-remotes/code/ci/master/tree/remotes), and 47 air conditioner and heat pump remotes (Daikin, Mitsubishi, Fujitsu, Gree, Panasonic, Samsung, Toshiba and more), see [Remotes](#remotes)
 * Convert a LIRC configuration (`lircd.conf`) you already have with [tools/lirc2irlingo.py](tools/lirc2irlingo.py)
 * Derive a remote from recorded codes with [tools/ir2irlingo.py](tools/ir2irlingo.py), see [Remotes derived from recordings](#remotes-derived-from-recordings)
 * Reverse engineer your remote control, e.g. using [IR decoder for Arduino](https://github.com/ToniA/Raw-IR-decoder-for-Arduino.git) which I did for [Panasonic airconditioner](https://github.com/mortenmathiasen/irlingo/blob/master/conf/remotes/panasonic/hvac_panasonic.pdf)
@@ -385,7 +385,7 @@ irlingo --remote sony/RM-ED011 --feature key=KEY_POWER
 
 ## Remotes
 
-Remotes are JSON files in `conf/remotes/<manufacturer>/`, in the same structure as the [LIRC remote database](https://sourceforge.net/p/lirc-remotes/code/ci/master/tree/remotes). `panasonic/hvac_panasonic` is irlingo's own; the others are converted from LIRC.
+Remotes are JSON files in `conf/remotes/<manufacturer>/`, in the same structure as the [LIRC remote database](https://sourceforge.net/p/lirc-remotes/code/ci/master/tree/remotes). irlingo's own are the 47 air conditioner remotes, named `hvac_*`: `panasonic/hvac_panasonic`, and one for each model of the [arduino-heatpumpir](https://github.com/ToniA/arduino-heatpumpir) library (see [Usage](doc/usage.md#setting-an-air-conditioner)); the others are converted from LIRC.
 
 ### Choosing the remotes of an installation
 
@@ -457,7 +457,7 @@ For protocols ir2irlingo cannot describe, `--fallback` hard-codes the recorded c
 
 Limitations: codes of different lengths need a feature value that selects them (or `--fallback`); every symbol must be a mark followed by a space (pulse distance or pulse width coding, used by most air conditioners, not RC5/RC6); a code must end with a stop mark, since the space after the last mark cannot be recorded; CRCs wider than a unit are not searched; and an override depending on two other features is not found, only one depending on one (see [Overrides](#overrides)).
 
-[tools/heatpumpir](tools/heatpumpir) records the codes of the [arduino-heatpumpir](https://github.com/ToniA/arduino-heatpumpir) library as captures, for every air conditioner model it supports. The library (GPL-2.0) is not part of irlingo; build the recorder against a checkout of it:
+[tools/heatpumpir](tools/heatpumpir) records the codes of the [arduino-heatpumpir](https://github.com/ToniA/arduino-heatpumpir) library as captures, for every air conditioner model it supports; irlingo's remotes for those models were made this way. The library (GPL-2.0) is not part of irlingo; build the recorder against a checkout of it:
 ```
 git clone https://github.com/ToniA/arduino-heatpumpir.git
 cmake -S tools/heatpumpir -B build/heatpumpir -DHEATPUMPIR_DIR=$PWD/arduino-heatpumpir

@@ -152,8 +152,8 @@ workflow, followed by `tools/clang-tidy.py`. A separate workflow converts the LI
 
 Update `VERSION` in `CMakeLists.txt`, commit, and push a matching tag:
 ```
-git tag v3.1.0
-git push origin v3.1.0
+git tag v3.2.0
+git push origin v3.2.0
 ```
 
 GitHub Actions then runs all tests, builds the packages for every Raspberry Pi architecture and the archive of all remotes (`irlingo-remotes-<version>.tar.gz`), and publishes them with checksums as a GitHub release.

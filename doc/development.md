@@ -150,10 +150,28 @@ workflow, followed by `tools/clang-tidy.py`. A separate workflow converts the LI
 
 ## Releases
 
-Update `VERSION` in `CMakeLists.txt`, commit, and push a matching tag:
+Update `VERSION` in `CMakeLists.txt`, commit, and push a matching signed tag:
 ```
-git tag v3.2.0
-git push origin v3.2.0
+git commit -S -m "Release 3.2.0"
+git tag -s v3.2.0 -m "irlingo 3.2.0"
+git push origin master v3.2.0
 ```
 
-GitHub Actions then runs all tests, builds the packages for every Raspberry Pi architecture and the archive of all remotes (`irlingo-remotes-<version>.tar.gz`), and publishes them with checksums as a GitHub release.
+GitHub Actions then runs all tests, builds the packages for every Raspberry Pi architecture, the archive of all remotes (`irlingo-remotes-<version>.tar.gz`) and the API documentation (`irlingo-api-docs-<version>.tar.gz`), and publishes them with checksums as a GitHub release.
+
+The release commit and tag are signed, so GitHub shows them as verified. This
+needs a signing key: with an SSH key, set git up once
+
+```
+git config --global gpg.format ssh
+git config --global user.signingkey ~/.ssh/id_ed25519.pub
+git config --global commit.gpgsign true   # sign every commit, then -S is not needed
+git config --global tag.gpgsign true      # sign every annotated tag, then -s is not needed
+```
+
+and add the same public key to your GitHub account as a **signing key**
+(Settings, SSH and GPG keys, or
+`gh ssh-key add ~/.ssh/id_ed25519.pub --type signing`). To check a signature
+locally, list your key in an allowed signers file
+(`git config --global gpg.ssh.allowedSignersFile ~/.ssh/allowed_signers`) and
+run `git verify-tag v3.2.0`.

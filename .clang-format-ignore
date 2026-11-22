@@ -1,0 +1,5 @@
+# Code copied from other projects keeps its own style
+components/irlingo/parson.c
+components/irlingo/parson.h
+components/irlingo/log.h
+src/log.c

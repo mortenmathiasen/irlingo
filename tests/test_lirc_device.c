@@ -15,7 +15,7 @@
 
 // --- simulated driver
 static uint32_t fakeFeatures;
-static unsigned long failRequest;    // ioctl request that fails, 0 for none
+static unsigned long failRequest;  // ioctl request that fails, 0 for none
 static uint32_t lastMode, lastCarrier, lastDuty;
 static int shortWrite;
 
@@ -25,17 +25,25 @@ static int fakeIoctl(unsigned long request, uint32_t *arg) {
     return -1;
   }
   switch (request) {
-  case LIRC_GET_FEATURES: *arg = fakeFeatures; return 0;
-  case LIRC_SET_SEND_MODE: lastMode = *arg; return 0;
-  case LIRC_SET_SEND_CARRIER: lastCarrier = *arg; return 0;
-  case LIRC_SET_SEND_DUTY_CYCLE: lastDuty = *arg; return 0;
+    case LIRC_GET_FEATURES:
+      *arg = fakeFeatures;
+      return 0;
+    case LIRC_SET_SEND_MODE:
+      lastMode = *arg;
+      return 0;
+    case LIRC_SET_SEND_CARRIER:
+      lastCarrier = *arg;
+      return 0;
+    case LIRC_SET_SEND_DUTY_CYCLE:
+      lastDuty = *arg;
+      return 0;
   }
   errno = ENOTTY;
   return -1;
 }
 
 int __wrap_ioctl(int fd, unsigned long request, ...) {
-  (void)fd;
+  (void) fd;
   va_list ap;
   va_start(ap, request);
   uint32_t *arg = va_arg(ap, uint32_t *);
@@ -46,7 +54,7 @@ int __wrap_ioctl(int fd, unsigned long request, ...) {
 // 32-bit glibc with a 64-bit time_t (Debian's armhf and armel) calls this
 // instead of ioctl
 int __wrap___ioctl_time64(int fd, unsigned long request, ...) {
-  (void)fd;
+  (void) fd;
   va_list ap;
   va_start(ap, request);
   uint32_t *arg = va_arg(ap, uint32_t *);
@@ -66,7 +74,9 @@ static char dir[] = "/tmp/irlingo-lirc-XXXXXX";
 static char device[64], remote[64];
 
 static const symbolDefinition SYMBOLS[] = {
-  {'H', 9000, 4500}, {'0', 560, 560}, {'1', 560, 1690},
+    {'H', 9000, 4500},
+    {'0', 560, 560},
+    {'1', 560, 1690},
 };
 
 static void useDevice(const char *path) {
@@ -88,7 +98,7 @@ static void reset(void) {
 }
 
 static int send(double duty, const char *code) {
-  return irSlingGeneric(17, 38000, duty, 3, (symbolDefinition *)SYMBOLS, code);
+  return irSlingGeneric(17, 38000, duty, 3, (symbolDefinition *) SYMBOLS, code);
 }
 
 static void test_transmit(void) {
@@ -154,7 +164,7 @@ static void test_open_failures(void) {
   useDevice("/nonexistent/irlingo/lirc0");
   CHECK_EQ_INT(1, send(0.5, "H1"));
 
-  if (geteuid() != 0) {   // root may open anything
+  if (geteuid() != 0) {  // root may open anything
     reset();
     chmod(device, 0444);
     CHECK_EQ_INT(1, send(0.5, "H1"));
@@ -162,7 +172,7 @@ static void test_open_failures(void) {
   }
 
   reset();
-  useDevice(dir);   // a directory cannot be opened for writing
+  useDevice(dir);  // a directory cannot be opened for writing
   CHECK_EQ_INT(1, send(0.5, "H1"));
 }
 

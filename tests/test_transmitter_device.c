@@ -11,32 +11,28 @@
 
 // --- simulated libgpiod
 static char devDir[] = "/tmp/irlingo-gpiod-XXXXXX";
-static const char *chipWithLine;     // "/dev/gpiochipN" holding the line, or NULL
-static const char *failFunction;     // name of the libgpiod function that fails
+static const char *chipWithLine;  // "/dev/gpiochipN" holding the line, or NULL
+static const char *failFunction;  // name of the libgpiod function that fails
 static int lineOffset;
 static int values[64];
 static int valueCount;
 static int chipsOpen;
 static char dummy;
 
-#define FAKE ((void *)&dummy)
+#define FAKE ((void *) &dummy)
 #define FAILS(name) (failFunction && strcmp(failFunction, name) == 0)
 
 DIR *__real_opendir(const char *name);
-DIR *__wrap_opendir(const char *name) {
-  return __real_opendir(strcmp(name, "/dev") == 0 ? devDir : name);
-}
+DIR *__wrap_opendir(const char *name) { return __real_opendir(strcmp(name, "/dev") == 0 ? devDir : name); }
 
-bool __wrap_gpiod_is_gpiochip_device(const char *path) {
-  return strncmp(path, "/dev/gpiochip", 13) == 0;
-}
+bool __wrap_gpiod_is_gpiochip_device(const char *path) { return strncmp(path, "/dev/gpiochip", 13) == 0; }
 
 struct gpiod_chip *__wrap_gpiod_chip_open(const char *path) {
-  (void)path;
+  (void) path;
   if (FAILS("gpiod_chip_open"))
     return NULL;
   chipsOpen++;
-  return (struct gpiod_chip *)strdup(path);
+  return (struct gpiod_chip *) strdup(path);
 }
 
 void __wrap_gpiod_chip_close(struct gpiod_chip *chip) {
@@ -45,7 +41,7 @@ void __wrap_gpiod_chip_close(struct gpiod_chip *chip) {
 }
 
 int __wrap_gpiod_chip_get_line_offset_from_name(struct gpiod_chip *chip, const char *name) {
-  if (chipWithLine && strcmp((const char *)chip, chipWithLine) == 0 && strcmp(name, "GPIO17") == 0)
+  if (chipWithLine && strcmp((const char *) chip, chipWithLine) == 0 && strcmp(name, "GPIO17") == 0)
     return lineOffset;
   return -1;
 }
@@ -53,43 +49,50 @@ int __wrap_gpiod_chip_get_line_offset_from_name(struct gpiod_chip *chip, const c
 struct gpiod_line_settings *__wrap_gpiod_line_settings_new(void) {
   return FAILS("gpiod_line_settings_new") ? NULL : FAKE;
 }
-void __wrap_gpiod_line_settings_free(struct gpiod_line_settings *s) { (void)s; }
+void __wrap_gpiod_line_settings_free(struct gpiod_line_settings *s) { (void) s; }
 int __wrap_gpiod_line_settings_set_direction(struct gpiod_line_settings *s, enum gpiod_line_direction d) {
-  (void)s; (void)d; return 0;
+  (void) s;
+  (void) d;
+  return 0;
 }
 int __wrap_gpiod_line_settings_set_output_value(struct gpiod_line_settings *s, enum gpiod_line_value v) {
-  (void)s; (void)v; return 0;
+  (void) s;
+  (void) v;
+  return 0;
 }
 
-struct gpiod_line_config *__wrap_gpiod_line_config_new(void) {
-  return FAILS("gpiod_line_config_new") ? NULL : FAKE;
-}
-void __wrap_gpiod_line_config_free(struct gpiod_line_config *c) { (void)c; }
-int __wrap_gpiod_line_config_add_line_settings(struct gpiod_line_config *c, const unsigned int *offsets,
-                                               size_t n, struct gpiod_line_settings *s) {
-  (void)c; (void)s;
-  lineOffset = n == 1 ? (int)offsets[0] : -1;
+struct gpiod_line_config *__wrap_gpiod_line_config_new(void) { return FAILS("gpiod_line_config_new") ? NULL : FAKE; }
+void __wrap_gpiod_line_config_free(struct gpiod_line_config *c) { (void) c; }
+int __wrap_gpiod_line_config_add_line_settings(struct gpiod_line_config *c, const unsigned int *offsets, size_t n,
+                                               struct gpiod_line_settings *s) {
+  (void) c;
+  (void) s;
+  lineOffset = n == 1 ? (int) offsets[0] : -1;
   return FAILS("gpiod_line_config_add_line_settings") ? -1 : 0;
 }
 
 struct gpiod_request_config *__wrap_gpiod_request_config_new(void) {
   return FAILS("gpiod_request_config_new") ? NULL : FAKE;
 }
-void __wrap_gpiod_request_config_free(struct gpiod_request_config *c) { (void)c; }
+void __wrap_gpiod_request_config_free(struct gpiod_request_config *c) { (void) c; }
 void __wrap_gpiod_request_config_set_consumer(struct gpiod_request_config *c, const char *name) {
-  (void)c; (void)name;
+  (void) c;
+  (void) name;
 }
 
-struct gpiod_line_request *__wrap_gpiod_chip_request_lines(struct gpiod_chip *chip,
-    struct gpiod_request_config *rc, struct gpiod_line_config *lc) {
-  (void)chip; (void)rc; (void)lc;
+struct gpiod_line_request *__wrap_gpiod_chip_request_lines(struct gpiod_chip *chip, struct gpiod_request_config *rc,
+                                                           struct gpiod_line_config *lc) {
+  (void) chip;
+  (void) rc;
+  (void) lc;
   return FAILS("gpiod_chip_request_lines") ? NULL : FAKE;
 }
-void __wrap_gpiod_line_request_release(struct gpiod_line_request *r) { (void)r; }
+void __wrap_gpiod_line_request_release(struct gpiod_line_request *r) { (void) r; }
 
 int __wrap_gpiod_line_request_set_value(struct gpiod_line_request *r, unsigned int offset,
                                         enum gpiod_line_value value) {
-  (void)r; (void)offset;
+  (void) r;
+  (void) offset;
   if (FAILS("gpiod_line_request_set_value") && valueCount >= 2)
     return -1;
   if (valueCount < 64)
@@ -125,15 +128,19 @@ static void test_transmit_on_named_line(void) {
 static void test_fallback_to_first_chip(void) {
   reset(NULL, 0);
   CHECK_EQ_INT(0, irSlingGeneric(17, 10000, 0.5, 1, SYMBOLS, "00"));
-  CHECK_EQ_INT(17, lineOffset);   // the pin number used as line offset
+  CHECK_EQ_INT(17, lineOffset);  // the pin number used as line offset
   CHECK_EQ_INT(5, valueCount);
   CHECK_EQ_INT(0, chipsOpen);
 }
 
 static void test_failures(void) {
-  const char *functions[] = {"gpiod_chip_open", "gpiod_line_settings_new", "gpiod_line_config_new",
-                             "gpiod_line_config_add_line_settings", "gpiod_request_config_new",
-                             "gpiod_chip_request_lines", "gpiod_line_request_set_value"};
+  const char *functions[] = {"gpiod_chip_open",
+                             "gpiod_line_settings_new",
+                             "gpiod_line_config_new",
+                             "gpiod_line_config_add_line_settings",
+                             "gpiod_request_config_new",
+                             "gpiod_chip_request_lines",
+                             "gpiod_line_request_set_value"};
   for (size_t i = 0; i < sizeof(functions) / sizeof(functions[0]); i++) {
     reset("/dev/gpiochip0", 3);
     failFunction = functions[i];

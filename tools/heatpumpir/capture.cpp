@@ -23,11 +23,9 @@
 // ------------------------------------------------------------- recording
 
 class RecordingSender : public IRSender {
-public:
+ public:
   RecordingSender() : IRSender(0) {}
-  void setFrequency(int frequency) override {
-    this->frequency = frequency < 1000 ? frequency * 1000 : frequency;
-  }
+  void setFrequency(int frequency) override { this->frequency = frequency < 1000 ? frequency * 1000 : frequency; }
   void mark(int length) override { add(true, length); }
   void space(int length) override { add(false, length); }
 
@@ -41,14 +39,20 @@ public:
   }
   void clear() { durations.clear(); }
 
-  std::vector<long> durations;   // mark, space, mark, ...
+  std::vector<long> durations;  // mark, space, mark, ...
   int frequency = 38000;
 };
 
 static RecordingSender *recorder = nullptr;
 
-void delay(unsigned long ms) { if (recorder) recorder->space(ms * 1000); }
-void delayMicroseconds(unsigned int us) { if (recorder) recorder->space(us); }
+void delay(unsigned long ms) {
+  if (recorder)
+    recorder->space(ms * 1000);
+}
+void delayMicroseconds(unsigned int us) {
+  if (recorder)
+    recorder->space(us);
+}
 unsigned long millis() { return 0; }
 unsigned long micros() { return 0; }
 
@@ -68,14 +72,52 @@ extern "C" struct tm *localtime(const time_t *) {
 // --------------------------------------------------------------- features
 
 static const char *const MODELS[] = {
-  "AUX", "ballu", "carrier_mca", "carrier_nqv", "daikin_arc417", "daikin_arc480", "daikin",
-  "electroluxyal", "fuego", "fujitsu_awyz", "gree", "greeyaa", "greeyan", "greeyac", "greeyt",
-  "hisense_aud", "hitachi", "hyundai", "ivt", "nibe", "midea", "mitsubishi_fa", "mitsubishi_fd",
-  "mitsubishi_fe", "mitsubishi_heavy_fdtc", "mitsubishi_heavy_zj", "mitsubishi_heavy_zm",
-  "mitsubishi_kj", "mitsubishi_msc", "mitsubishi_msy", "mitsubishi_sez", "olimpia",
-  "panasonic_ckp", "panasonic_dke", "panasonic_eke", "panasonic_jke", "panasonic_lke",
-  "panasonic_nke", "philco_phs32", "samsung_aqv", "samsung_fjm", "sharp", "toshiba_daiseikai",
-  "toshiba", "ZHJG01", "ZHLT01",
+    "AUX",
+    "ballu",
+    "carrier_mca",
+    "carrier_nqv",
+    "daikin_arc417",
+    "daikin_arc480",
+    "daikin",
+    "electroluxyal",
+    "fuego",
+    "fujitsu_awyz",
+    "gree",
+    "greeyaa",
+    "greeyan",
+    "greeyac",
+    "greeyt",
+    "hisense_aud",
+    "hitachi",
+    "hyundai",
+    "ivt",
+    "nibe",
+    "midea",
+    "mitsubishi_fa",
+    "mitsubishi_fd",
+    "mitsubishi_fe",
+    "mitsubishi_heavy_fdtc",
+    "mitsubishi_heavy_zj",
+    "mitsubishi_heavy_zm",
+    "mitsubishi_kj",
+    "mitsubishi_msc",
+    "mitsubishi_msy",
+    "mitsubishi_sez",
+    "olimpia",
+    "panasonic_ckp",
+    "panasonic_dke",
+    "panasonic_eke",
+    "panasonic_jke",
+    "panasonic_lke",
+    "panasonic_nke",
+    "philco_phs32",
+    "samsung_aqv",
+    "samsung_fjm",
+    "sharp",
+    "toshiba_daiseikai",
+    "toshiba",
+    "ZHJG01",
+    "ZHLT01",
 };
 
 struct Value {
@@ -106,29 +148,41 @@ static std::vector<Feature> features(HeatpumpIR *heatpump) {
   for (int t = minTemp; t <= maxTemp; t++) {
     if (t == 22 || (t == maxTemp && temperature.base == 0 && maxTemp < 22))
       temperature.base = temperature.values.size();
-    temperature.values.push_back({std::to_string(t), (uint8_t)t});
+    temperature.values.push_back({std::to_string(t), (uint8_t) t});
   }
   Feature fan{"fan", {{"AUTO", FAN_AUTO}}, 0};
   for (int f = 1; f <= fanSpeeds && f <= 5; f++)
-    fan.values.push_back({std::to_string(f), (uint8_t)f});
+    fan.values.push_back({std::to_string(f), (uint8_t) f});
 
   return {
-    {"power", {{"ON", POWER_ON}, {"OFF", POWER_OFF}}, 0},
-    {"mode", {{"AUTO", MODE_AUTO}, {"HEAT", MODE_HEAT}, {"COOL", MODE_COOL},
-              {"DRY", MODE_DRY}, {"FAN", MODE_FAN}}, 2},
-    fan,
-    temperature,
-    {"vertical", {{"AUTO", VDIR_AUTO}, {"SWING", VDIR_SWING}, {"UP", VDIR_UP},
-                  {"MUP", VDIR_MUP}, {"MIDDLE", VDIR_MIDDLE}, {"MDOWN", VDIR_MDOWN},
-                  {"DOWN", VDIR_DOWN}}, 0},
-    {"horizontal", {{"AUTO", HDIR_AUTO}, {"SWING", HDIR_SWING}, {"MIDDLE", HDIR_MIDDLE},
-                    {"LEFT", HDIR_LEFT}, {"MLEFT", HDIR_MLEFT}, {"MRIGHT", HDIR_MRIGHT},
-                    {"RIGHT", HDIR_RIGHT}}, 0},
+      {"power", {{"ON", POWER_ON}, {"OFF", POWER_OFF}}, 0},
+      {"mode",
+       {{"AUTO", MODE_AUTO}, {"HEAT", MODE_HEAT}, {"COOL", MODE_COOL}, {"DRY", MODE_DRY}, {"FAN", MODE_FAN}},
+       2},
+      fan,
+      temperature,
+      {"vertical",
+       {{"AUTO", VDIR_AUTO},
+        {"SWING", VDIR_SWING},
+        {"UP", VDIR_UP},
+        {"MUP", VDIR_MUP},
+        {"MIDDLE", VDIR_MIDDLE},
+        {"MDOWN", VDIR_MDOWN},
+        {"DOWN", VDIR_DOWN}},
+       0},
+      {"horizontal",
+       {{"AUTO", HDIR_AUTO},
+        {"SWING", HDIR_SWING},
+        {"MIDDLE", HDIR_MIDDLE},
+        {"LEFT", HDIR_LEFT},
+        {"MLEFT", HDIR_MLEFT},
+        {"MRIGHT", HDIR_MRIGHT},
+        {"RIGHT", HDIR_RIGHT}},
+       0},
   };
 }
 
-static void capture(HeatpumpIR *heatpump, const std::vector<Feature> &fs,
-                    const std::vector<size_t> &chosen) {
+static void capture(HeatpumpIR *heatpump, const std::vector<Feature> &fs, const std::vector<size_t> &chosen) {
   RecordingSender sender;
   recorder = &sender;
   uint8_t c[6];
@@ -137,12 +191,11 @@ static void capture(HeatpumpIR *heatpump, const std::vector<Feature> &fs,
   heatpump->send(sender, c[0], c[1], c[2], c[3], c[4], c[5]);
   recorder = nullptr;
   if (sender.durations.size() % 2 == 0 && !sender.durations.empty())
-    sender.durations.pop_back();   // the final space is not recorded
+    sender.durations.pop_back();  // the final space is not recorded
 
   printf("{\"features\": {");
   for (size_t i = 0; i < fs.size(); i++)
-    printf("%s\"%s\": \"%s\"", i ? ", " : "", fs[i].name.c_str(),
-           fs[i].values[chosen[i]].name.c_str());
+    printf("%s\"%s\": \"%s\"", i ? ", " : "", fs[i].name.c_str(), fs[i].values[chosen[i]].name.c_str());
   printf("}, \"frequency\": %d, \"durations\": [", sender.frequency);
   for (size_t i = 0; i < sender.durations.size(); i++)
     printf("%s%ld", i ? ", " : "", sender.durations[i]);

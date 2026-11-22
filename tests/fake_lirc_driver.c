@@ -12,7 +12,7 @@ static int fakeIoctl(unsigned long request, uint32_t *arg) {
 }
 
 int __wrap_ioctl(int fd, unsigned long request, ...) {
-  (void)fd;
+  (void) fd;
   va_list ap;
   va_start(ap, request);
   uint32_t *arg = va_arg(ap, uint32_t *);
@@ -21,7 +21,7 @@ int __wrap_ioctl(int fd, unsigned long request, ...) {
 }
 
 int __wrap___ioctl_time64(int fd, unsigned long request, ...) {
-  (void)fd;
+  (void) fd;
   va_list ap;
   va_start(ap, request);
   uint32_t *arg = va_arg(ap, uint32_t *);

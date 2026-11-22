@@ -35,13 +35,13 @@ int main(int argc, char *argv[]) {
       char *value = strchr(pair, '=');
       size_t index = 0;
       if (!value) {
-	fprintf(stderr, "Not NAME=VALUE: %s\n", pair);
-	return 2;
+        fprintf(stderr, "Not NAME=VALUE: %s\n", pair);
+        return 2;
       }
       *value++ = 0;
       if (!hasFeatureNameAndValue(pair, value) || !getFeatureIndex(pair, &index)) {
-	fprintf(stderr, "Unknown feature %s=%s\n", pair, value);
-	return 2;
+        fprintf(stderr, "Unknown feature %s=%s\n", pair, value);
+        return 2;
       }
       features[index].name = pair;
       features[index].value = value;

@@ -41,6 +41,8 @@ irlingo:
     remote: panasonic/hvac_panasonic
   - id: carrier_remote
     remote: carrier/hvac_carrier_nqv
+  - id: daikin
+    remote: daikin/hvac_daikin
   - id: amp
     remote: RC4330_01H_Philips_RC433001H_AMP
   - id: own
@@ -52,6 +54,10 @@ sensor:
     lambda: 'return 21.5;'
 
 climate:
+  # Mapping guessed, off by the power feature
+  - platform: irlingo
+    remote_id: daikin
+    name: Daikin
   # Mapping guessed from the remote's features
   - platform: irlingo
     remote_id: aircon

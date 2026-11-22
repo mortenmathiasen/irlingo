@@ -1,0 +1,194 @@
+{
+    "description": "Electrolux air conditioners with remote YAL, as the electroluxyal model of arduino-heatpumpir",
+    "frequency": 38000,
+    "dutycycle": 0.5,
+    "transmitter": {"outpin": 17},
+    "symboldefinitions": {
+        "-": {"mark": 0, "space": 0},
+        "0": {"mark": 620, "space": 540},
+        "1": {"mark": 620, "space": 1600},
+        "H": {"mark": 9000, "space": 4000},
+        "W": {"mark": 620, "space": 19000}
+    },
+    "checksums": [
+        {
+            "type": "sum",
+            "unit": "nibble",
+            "data": [0, 2, 9],
+            "at": 15,
+            "init": 12,
+            "restart": "HW"
+        }
+    ],
+    "template": "H-10010000-01100000-00000100-00001010-010-W-00000-00000000-10000000-00000001-1010",
+    "features": {
+        "fan": {"AUTO": "      00                                                                         ", "1": "      10                                                                         ", "2": "      01                                                                         ", "3": "      11                                                                         "},
+        "temperature": {"22": "           0110                                                                  ", "16": "           0000                                                                  ", "17": "           1000                                                                  ", "18": "           0100                                                                  ", "19": "           1100                                                                  ", "20": "           0010                                                                  ", "21": "           1010                                                                  ", "23": "           1110                                                                  ", "24": "           0001                                                                  ", "25": "           1001                                                                  ", "26": "           0101                                                                  ", "27": "           1101                                                                  ", "28": "           0011                                                                  ", "29": "           1011                                                                  ", "30": "           0111                                                                  "},
+        "mode": {"COOL": "  100                                                                            ", "AUTO": "  000                                                                            ", "HEAT": "  001                                                                            ", "DRY": "  010                                                                            ", "FAN": "  110                                                                            "},
+        "power": {"ON": "     1                                                                           ", "OFF": "  0010                                                                           "},
+        "vertical": {"AUTO": "        0                                   0                                    ", "SWING": "        1                                   1                                    ", "UP": "        0                                   0                                    ", "MUP": "        0                                   0                                    ", "MIDDLE": "        0                                   0                                    ", "MDOWN": "        0                                   0                                    ", "DOWN": "        0                                   0                                    "},
+        "horizontal": {"AUTO": "                                                0                                ", "SWING": "        1                                       1                                ", "MIDDLE": "                                                0                                ", "LEFT": "                                                0                                ", "MLEFT": "                                                0                                ", "MRIGHT": "                                                0                                ", "RIGHT": "                                                0                                "}
+    },
+    "overrides": [
+        {
+            "when": {"mode": "AUTO", "power": "ON"},
+            "code": "           1001"
+        },
+        {
+            "when": {"mode": "DRY", "power": "ON"},
+            "code": "      10"
+        }
+    ],
+    "tests": [
+        {
+            "description": "Capture 1",
+            "features": {"power": "ON", "mode": "COOL", "fan": "AUTO", "temperature": "22", "vertical": "AUTO", "horizontal": "AUTO"},
+            "outcome": "H-10010000-01100000-00000100-00001010-010-W-00000-00000000-10000000-00000001-1010"
+        },
+        {
+            "description": "Capture 35",
+            "features": {"power": "ON", "mode": "COOL", "fan": "AUTO", "temperature": "22", "vertical": "AUTO", "horizontal": "RIGHT"},
+            "outcome": "H-10010000-01100000-00000100-00001010-010-W-00000-00000000-10000000-00000001-1010"
+        },
+        {
+            "description": "Capture 69",
+            "features": {"power": "OFF", "mode": "AUTO", "fan": "1", "temperature": "24", "vertical": "MUP", "horizontal": "AUTO"},
+            "outcome": "H-00101000-00010000-00000100-00001010-010-W-00000-00000000-10000000-00000000-0010"
+        },
+        {
+            "description": "Capture 103",
+            "features": {"power": "OFF", "mode": "HEAT", "fan": "3", "temperature": "16", "vertical": "MIDDLE", "horizontal": "RIGHT"},
+            "outcome": "H-00101100-00000000-00000100-00001010-010-W-00000-00000000-10000000-00000000-0000"
+        },
+        {
+            "description": "Capture 137",
+            "features": {"power": "OFF", "mode": "AUTO", "fan": "AUTO", "temperature": "23", "vertical": "MUP", "horizontal": "RIGHT"},
+            "outcome": "H-00100000-11100000-00000100-00001010-010-W-00000-00000000-10000000-00000001-1100"
+        },
+        {
+            "description": "Capture 171",
+            "features": {"power": "OFF", "mode": "AUTO", "fan": "AUTO", "temperature": "23", "vertical": "SWING", "horizontal": "MLEFT"},
+            "outcome": "H-00100010-11100000-00000100-00001010-010-W-10000-00000000-10000000-00000001-1100"
+        },
+        {
+            "description": "Capture 205",
+            "features": {"power": "ON", "mode": "COOL", "fan": "2", "temperature": "18", "vertical": "SWING", "horizontal": "RIGHT"},
+            "outcome": "H-10010110-01000000-00000100-00001010-010-W-10000-00000000-10000000-00000001-1100"
+        },
+        {
+            "description": "Capture 239",
+            "features": {"power": "OFF", "mode": "COOL", "fan": "1", "temperature": "25", "vertical": "DOWN", "horizontal": "AUTO"},
+            "outcome": "H-00101000-10010000-00000100-00001010-010-W-00000-00000000-10000000-00000001-0010"
+        },
+        {
+            "description": "Capture 273",
+            "features": {"power": "ON", "mode": "FAN", "fan": "1", "temperature": "22", "vertical": "MIDDLE", "horizontal": "MLEFT"},
+            "outcome": "H-11011000-01100000-00000100-00001010-010-W-00000-00000000-10000000-00000001-0110"
+        },
+        {
+            "description": "Capture 307",
+            "features": {"power": "ON", "mode": "COOL", "fan": "3", "temperature": "27", "vertical": "SWING", "horizontal": "RIGHT"},
+            "outcome": "H-10011110-11010000-00000100-00001010-010-W-10000-00000000-10000000-00000000-0000"
+        },
+        {
+            "description": "Capture 341",
+            "features": {"power": "ON", "mode": "FAN", "fan": "2", "temperature": "21", "vertical": "MDOWN", "horizontal": "SWING"},
+            "outcome": "H-11010110-10100000-00000100-00001010-010-W-00001-00000000-10000000-00000001-0110"
+        },
+        {
+            "description": "Capture 375",
+            "features": {"power": "ON", "mode": "DRY", "fan": "AUTO", "temperature": "28", "vertical": "MIDDLE", "horizontal": "LEFT"},
+            "outcome": "H-01011000-00110000-00000100-00001010-010-W-00000-00000000-10000000-00000000-1000"
+        },
+        {
+            "description": "Capture 409",
+            "features": {"power": "ON", "mode": "DRY", "fan": "1", "temperature": "28", "vertical": "AUTO", "horizontal": "RIGHT"},
+            "outcome": "H-01011000-00110000-00000100-00001010-010-W-00000-00000000-10000000-00000000-1000"
+        },
+        {
+            "description": "Capture 443",
+            "features": {"power": "ON", "mode": "AUTO", "fan": "2", "temperature": "22", "vertical": "MDOWN", "horizontal": "AUTO"},
+            "outcome": "H-00010100-10010000-00000100-00001010-010-W-00000-00000000-10000000-00000001-0110"
+        },
+        {
+            "description": "Capture 477",
+            "features": {"power": "ON", "mode": "DRY", "fan": "1", "temperature": "30", "vertical": "AUTO", "horizontal": "AUTO"},
+            "outcome": "H-01011000-01110000-00000100-00001010-010-W-00000-00000000-10000000-00000000-0100"
+        },
+        {
+            "description": "Capture 511",
+            "features": {"power": "OFF", "mode": "DRY", "fan": "1", "temperature": "18", "vertical": "SWING", "horizontal": "MLEFT"},
+            "outcome": "H-00101010-01000000-00000100-00001010-010-W-10000-00000000-10000000-00000000-1000"
+        },
+        {
+            "description": "Capture 545",
+            "features": {"power": "ON", "mode": "AUTO", "fan": "1", "temperature": "27", "vertical": "AUTO", "horizontal": "SWING"},
+            "outcome": "H-00011010-10010000-00000100-00001010-010-W-00001-00000000-10000000-00000000-1110"
+        },
+        {
+            "description": "Capture 579",
+            "features": {"power": "OFF", "mode": "COOL", "fan": "2", "temperature": "24", "vertical": "SWING", "horizontal": "MIDDLE"},
+            "outcome": "H-00100110-00010000-00000100-00001010-010-W-10000-00000000-10000000-00000000-0010"
+        },
+        {
+            "description": "Capture 613",
+            "features": {"power": "OFF", "mode": "HEAT", "fan": "3", "temperature": "30", "vertical": "MUP", "horizontal": "RIGHT"},
+            "outcome": "H-00101100-01110000-00000100-00001010-010-W-00000-00000000-10000000-00000000-1110"
+        },
+        {
+            "description": "Capture 647",
+            "features": {"power": "ON", "mode": "COOL", "fan": "2", "temperature": "27", "vertical": "AUTO", "horizontal": "RIGHT"},
+            "outcome": "H-10010100-11010000-00000100-00001010-010-W-00000-00000000-10000000-00000000-0000"
+        },
+        {
+            "description": "Capture 681",
+            "features": {"power": "ON", "mode": "HEAT", "fan": "3", "temperature": "22", "vertical": "UP", "horizontal": "AUTO"},
+            "outcome": "H-00111100-01100000-00000100-00001010-010-W-00000-00000000-10000000-00000000-1110"
+        },
+        {
+            "description": "Capture 715",
+            "features": {"power": "ON", "mode": "AUTO", "fan": "AUTO", "temperature": "16", "vertical": "DOWN", "horizontal": "SWING"},
+            "outcome": "H-00010010-10010000-00000100-00001010-010-W-00001-00000000-10000000-00000000-1110"
+        },
+        {
+            "description": "Capture 749",
+            "features": {"power": "ON", "mode": "AUTO", "fan": "1", "temperature": "26", "vertical": "MIDDLE", "horizontal": "MRIGHT"},
+            "outcome": "H-00011000-10010000-00000100-00001010-010-W-00000-00000000-10000000-00000001-0110"
+        },
+        {
+            "description": "Capture 783",
+            "features": {"power": "ON", "mode": "HEAT", "fan": "AUTO", "temperature": "26", "vertical": "SWING", "horizontal": "MRIGHT"},
+            "outcome": "H-00110010-01010000-00000100-00001010-010-W-10000-00000000-10000000-00000000-1000"
+        },
+        {
+            "description": "Capture 817",
+            "features": {"power": "ON", "mode": "FAN", "fan": "3", "temperature": "16", "vertical": "MIDDLE", "horizontal": "MRIGHT"},
+            "outcome": "H-11011100-00000000-00000100-00001010-010-W-00000-00000000-10000000-00000001-1100"
+        },
+        {
+            "description": "Capture 851",
+            "features": {"power": "OFF", "mode": "AUTO", "fan": "AUTO", "temperature": "16", "vertical": "SWING", "horizontal": "AUTO"},
+            "outcome": "H-00100010-00000000-00000100-00001010-010-W-10000-00000000-10000000-00000000-0000"
+        },
+        {
+            "description": "Capture 885",
+            "features": {"power": "ON", "mode": "COOL", "fan": "1", "temperature": "27", "vertical": "MUP", "horizontal": "MIDDLE"},
+            "outcome": "H-10011000-11010000-00000100-00001010-010-W-00000-00000000-10000000-00000000-0000"
+        },
+        {
+            "description": "Capture 919",
+            "features": {"power": "ON", "mode": "HEAT", "fan": "2", "temperature": "19", "vertical": "MUP", "horizontal": "LEFT"},
+            "outcome": "H-00110100-11000000-00000100-00001010-010-W-00000-00000000-10000000-00000001-1010"
+        },
+        {
+            "description": "Capture 953",
+            "features": {"power": "OFF", "mode": "FAN", "fan": "2", "temperature": "25", "vertical": "SWING", "horizontal": "MIDDLE"},
+            "outcome": "H-00100110-10010000-00000100-00001010-010-W-10000-00000000-10000000-00000001-0010"
+        },
+        {
+            "description": "Capture 987",
+            "features": {"power": "ON", "mode": "COOL", "fan": "2", "temperature": "26", "vertical": "AUTO", "horizontal": "RIGHT"},
+            "outcome": "H-10010100-01010000-00000100-00001010-010-W-00000-00000000-10000000-00000001-1110"
+        }
+    ]
+}

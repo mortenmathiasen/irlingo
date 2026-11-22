@@ -56,7 +56,7 @@ Or, without `apt`, extract the tarball into `/`:
 sudo tar -xzf irlingo-3.2.1-aarch64.tar.gz -C / --strip-components=1
 ```
 
-The packages install `irlingo`, `irlingo-remotes` and irlingo's own remotes (e.g. `panasonic/hvac_panasonic`). The more than 3000 remotes converted from the LIRC database are not included; add the ones you need with `irlingo-remotes`, see [Managing remotes](remotes.md#adding-remotes-to-an-installation).
+The packages install `irlingo`, `irlingo-remotes` and irlingo's own remotes: the 47 air conditioner remotes, e.g. `panasonic/hvac_panasonic` or `daikin/hvac_daikin`. The more than 3000 remotes converted from the LIRC database are not included; add the ones you need with `irlingo-remotes`, see [Managing remotes](remotes.md#adding-remotes-to-an-installation).
 
 Then enable the kernel IR transmitter.
 

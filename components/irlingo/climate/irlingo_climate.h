@@ -34,7 +34,7 @@ class IrlingoClimate : public climate::Climate, public Component, public Parente
   climate::ClimateTraits traits() override;
   void control(const climate::ClimateCall &call) override;
   void transmit_();
-  const char *nearest_temperature_();
+  const std::pair<float, const char *> &nearest_temperature_();
 
   std::vector<std::pair<climate::ClimateMode, std::vector<featureT>>> modes_;
   const char *temperature_feature_{nullptr};

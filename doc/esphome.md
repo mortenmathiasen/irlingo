@@ -34,7 +34,7 @@ The parts for irlingo:
 
 ```yaml
 external_components:
-  - source: github://mortenmathiasen/irlingo@v3.1.0
+  - source: github://mortenmathiasen/irlingo@v3.2.0
     components: [irlingo]
 
 remote_transmitter:

@@ -4,13 +4,8 @@
 #include "log.h"
 
 static const symbolDefinition SYMBOLS[] = {
-  {'H', 3515, 1744},
-  {'0', 436, 436},
-  {'1', 436, 1308},
-  {'W', 436, 10330},
-  {'-', 0, 0},
-  {'S', 0, 5000},   // space only
-  {'M', 600, 0},    // mark only
+    {'H', 3515, 1744}, {'0', 436, 436}, {'1', 436, 1308}, {'W', 436, 10330}, {'-', 0, 0}, {'S', 0, 5000},  // space only
+    {'M', 600, 0},                                                                                         // mark only
 };
 #define SYMBOL_COUNT (sizeof(SYMBOLS) / sizeof(SYMBOLS[0]))
 
@@ -75,9 +70,7 @@ static void test_nothing_to_transmit(void) {
   CHECK_EQ_INT(1, build("SS"));
 }
 
-static void test_undefined_symbol(void) {
-  CHECK_EQ_INT(1, build("H0X1"));
-}
+static void test_undefined_symbol(void) { CHECK_EQ_INT(1, build("H0X1")); }
 
 static void test_buffer_limit(void) {
   // Each '0' adds a pulse and a space; the trailing space is dropped
@@ -93,11 +86,10 @@ static void test_buffer_limit(void) {
 }
 
 static void test_hvac_panasonic_fits(void) {
-  const char *code =
-    "H-01000000-00000100-00000111-00100000-00000000-00000000-00000000-01100000-W"
-    "H-01000000-00000100-00000111-00100000-00000000-10010000-01010100-00000001-"
-    "11110101-10110000-00000000-01110000-00000111-00000000-00000000-10000001-"
-    "00000000-00000000-00100111-0";
+  const char *code = "H-01000000-00000100-00000111-00100000-00000000-00000000-00000000-01100000-W"
+                     "H-01000000-00000100-00000111-00100000-00000000-10010000-01010100-00000001-"
+                     "11110101-10110000-00000000-01110000-00000111-00000000-00000000-10000001-"
+                     "00000000-00000000-00100111-0";
   CHECK_EQ_INT(0, build(code));
   // 2 headers, the frame gap, 27 bytes of 8 bits and a stop bit, each a
   // pulse and a space, minus the trailing space

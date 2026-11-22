@@ -4,15 +4,14 @@
 #include "plugins.h"
 
 // Test vector "No 1" from conf/remotes/panasonic/hvac_panasonic.json
-static const char *VALID =
-  "H-01000000-00000100-00000111-00100000-00000000-00000000-00000000-01100000-W"
-  "H-01000000-00000100-00000111-00100000-00000000-10010000-01010100-00000001-"
-  "11110101-10110000-00000000-01110000-00000111-00000000-00000000-10000001-"
-  "00000000-00000000-00100111-0";
+static const char *VALID = "H-01000000-00000100-00000111-00100000-00000000-00000000-00000000-01100000-W"
+                           "H-01000000-00000100-00000111-00100000-00000000-10010000-01010100-00000001-"
+                           "11110101-10110000-00000000-01110000-00000111-00000000-00000000-10000001-"
+                           "00000000-00000000-00100111-0";
 
 static char *with_checksum(const char *checksum) {
   char *code = strdup(VALID);
-  char *last = strrchr(code, '-') - 8; // checksum byte before the stop bit
+  char *last = strrchr(code, '-') - 8;  // checksum byte before the stop bit
   memcpy(last, checksum, 8);
   return code;
 }
@@ -40,8 +39,8 @@ static void test_idempotent(void) {
 static void test_checksum_follows_payload(void) {
   char *code = strdup(VALID);
   // Flip the lowest bit of the first frame 2 data byte (bits are sent LSB first)
-  char *byte = code + strlen("H-01000000-00000100-00000111-00100000-00000000-00000000-00000000-01100000-W") +
-               strlen("H-");
+  char *byte =
+      code + strlen("H-01000000-00000100-00000111-00100000-00000000-00000000-00000000-01100000-W") + strlen("H-");
   byte[0] = byte[0] == '0' ? '1' : '0';
   hvac_panasonic_plugin(code);
   CHECK(strcmp(VALID, code) != 0);

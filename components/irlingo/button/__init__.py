@@ -11,12 +11,12 @@
 import esphome.codegen as cg
 from esphome.components import button
 import esphome.config_validation as cv
+from esphome.const import CONF_REPEAT
 import esphome.final_validate as fv
 
 from .. import (
     CONF_FEATURES,
     CONF_REMOTE_ID,
-    CONF_REPEAT,
     REPEAT_SCHEMA,
     IrlingoRemote,
     check_features,

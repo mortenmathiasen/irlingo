@@ -12,21 +12,40 @@ static int initResult, addResult, createResult, sendResult;
 static int addedPulses, deleted, terminated, busyPolls, mode;
 static int useAddResult;
 
-int __wrap_gpioCfgDMAchannels(unsigned p, unsigned s) { (void)p; (void)s; return 0; }
+int __wrap_gpioCfgDMAchannels(unsigned p, unsigned s) {
+  (void) p;
+  (void) s;
+  return 0;
+}
 int __wrap_gpioInitialise(void) { return initResult; }
-int __wrap_gpioSetMode(unsigned gpio, unsigned m) { (void)gpio; mode = m; return 0; }
+int __wrap_gpioSetMode(unsigned gpio, unsigned m) {
+  (void) gpio;
+  mode = m;
+  return 0;
+}
 int __wrap_gpioWaveClear(void) { return 0; }
 int __wrap_gpioWaveAddGeneric(unsigned n, gpioPulse_t *pulses) {
-  (void)pulses;
+  (void) pulses;
   addedPulses = n;
-  return useAddResult ? addResult : (int)n;
+  return useAddResult ? addResult : (int) n;
 }
 int __wrap_gpioWaveCreate(void) { return createResult; }
-int __wrap_gpioWaveTxSend(unsigned id, unsigned m) { (void)id; (void)m; return sendResult; }
+int __wrap_gpioWaveTxSend(unsigned id, unsigned m) {
+  (void) id;
+  (void) m;
+  return sendResult;
+}
 int __wrap_gpioWaveTxBusy(void) { return busyPolls-- > 0; }
-int __wrap_gpioWaveDelete(unsigned id) { (void)id; deleted++; return 0; }
+int __wrap_gpioWaveDelete(unsigned id) {
+  (void) id;
+  deleted++;
+  return 0;
+}
 void __wrap_gpioTerminate(void) { terminated++; }
-double __wrap_time_sleep(double seconds) { (void)seconds; return 0; }
+double __wrap_time_sleep(double seconds) {
+  (void) seconds;
+  return 0;
+}
 
 static symbolDefinition SYMBOLS[] = {{'0', 100, 200}};
 
@@ -43,7 +62,7 @@ static void test_transmit(void) {
   reset();
   CHECK_EQ_INT(0, irSlingGeneric(17, 10000, 0.5, 1, SYMBOLS, "00"));
   CHECK_EQ_INT(PI_OUTPUT, mode);
-  CHECK_EQ_INT(4, addedPulses);   // on, off+space, on, off+space
+  CHECK_EQ_INT(4, addedPulses);  // on, off+space, on, off+space
   CHECK_EQ_INT(1, deleted);
   CHECK_EQ_INT(1, terminated);
 }

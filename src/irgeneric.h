@@ -6,10 +6,6 @@
 
 #define MAX_PULSES 12000
 
-extern int irSlingGeneric(uint32_t outPin,
-		   int frequency,
-		   double dutyCycle,
-		   size_t sdDefCount,
-		   symbolDefinition *sdDef,
-		   const char *code);
+extern int irSlingGeneric(uint32_t outPin, int frequency, double dutyCycle, size_t sdDefCount, symbolDefinition *sdDef,
+                          const char *code);
 #endif

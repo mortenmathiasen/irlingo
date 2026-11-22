@@ -209,11 +209,71 @@ jobs:
           path: build/irlingo-remotes-*.tar.gz
           if-no-files-found: error
 
+  # The API documentation (Doxygen, as ESPHome makes it), built with the
+  # code, attached to releases and, from master, published on GitHub Pages.
+  # Doxygen warnings fail the build.
+  docs:
+    name: API documentation
+    runs-on: ubuntu-24.04
+    env:
+      DOXYGEN_VERSION: 1.12.0
+      DOXYGEN_SHA256: 3c42c3f3fb206732b503862d9c9c11978920a8214f223a3950bbf2520be5f647
+    steps:
+      - uses: actions/checkout@v4
+
+      # The version ESPHome's Doxyfile is written for; Ubuntu has 1.9.8
+      - name: Install Doxygen
+        run: |
+          curl -fsSL -o "$RUNNER_TEMP/doxygen.tar.gz" \
+            "https://github.com/doxygen/doxygen/releases/download/Release_${DOXYGEN_VERSION//./_}/doxygen-$DOXYGEN_VERSION.linux.bin.tar.gz"
+          echo "$DOXYGEN_SHA256  $RUNNER_TEMP/doxygen.tar.gz" | sha256sum -c -
+          tar -xzf "$RUNNER_TEMP/doxygen.tar.gz" -C "$RUNNER_TEMP"
+          echo "$RUNNER_TEMP/doxygen-$DOXYGEN_VERSION/bin" >> "$GITHUB_PATH"
+
+      - name: Build with the documentation
+        run: |
+          cmake -B build -DIRLINGO_DOCS=ON -DIRLINGO_GPIO_BACKEND=lirc -DBUILD_TESTING=OFF
+          cmake --build build --parallel
+          cmake --build build --target docs_archive
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: irlingo-api-docs
+          path: build/irlingo-api-docs-*.tar.gz
+          if-no-files-found: error
+
+      # The HTML for GitHub Pages, from master only (see the pages job)
+      - uses: actions/upload-pages-artifact@v3
+        if: github.event_name == 'push' && github.ref == 'refs/heads/master'
+        with:
+          path: build/docs/api-docs
+
+  # Publish the API documentation of master on GitHub Pages:
+  # https://mortenmathiasen.github.io/irlingo/
+  pages:
+    name: Publish API documentation
+    if: github.event_name == 'push' && github.ref == 'refs/heads/master'
+    needs: docs
+    runs-on: ubuntu-24.04
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    concurrency:
+      group: pages
+      cancel-in-progress: false
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4
+
   esphome:
     name: ESPHome
     runs-on: ubuntu-24.04
     env:
       ESPHOME_VERSION: 2026.11.0
+      CLANG_TIDY_VERSION: 23.1.4
     steps:
       - uses: actions/checkout@v4
 
@@ -235,10 +295,38 @@ jobs:
       - name: Check and compile the component
         run: tests/esphome/check.sh --compile
 
+      # ESPHome's clang-tidy checks, on the compilation database of the
+      # build above, with the clang-tidy version ESPHome uses
+      - name: Install clang-tidy
+        run: pip install "clang-tidy==$CLANG_TIDY_VERSION"
+
+      - name: clang-tidy
+        run: tools/clang-tidy.py
+
+  # The C and C++ code in ESPHome's style (.clang-format), with the
+  # clang-format version ESPHome uses
+  format:
+    name: clang-format
+    runs-on: ubuntu-24.04
+    env:
+      CLANG_FORMAT_VERSION: 23.1.3
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+
+      - name: Install clang-format
+        run: pip install "clang-format==$CLANG_FORMAT_VERSION"
+
+      - name: Check formatting
+        run: git ls-files '*.c' '*.h' '*.cpp' | xargs clang-format --dry-run --Werror
+
   release:
     name: Release
     if: startsWith(github.ref, 'refs/tags/v')
-    needs: [test, test-gpiod, coverage, rpi, remotes, esphome]
+    needs: [test, test-gpiod, coverage, rpi, remotes, esphome, format, docs]
     runs-on: ubuntu-24.04
     permissions:
       contents: write
@@ -253,7 +341,7 @@ jobs:
             exit 1
           fi
 
-      # Only the packages, not e.g. the coverage report
+      # Only the packages and the API documentation, not e.g. the coverage report
       - uses: actions/download-artifact@v4
         with:
           pattern: irlingo-*
@@ -268,6 +356,7 @@ jobs:
           for f in *.deb; do dpkg-deb --info "$f" > /dev/null; done
           test "$(ls *.deb | wc -l)" -eq 3
           test "$(ls irlingo-remotes-*.tar.gz | wc -l)" -eq 1
+          test "$(ls irlingo-api-docs-*.tar.gz | wc -l)" -eq 1
 
       - name: Checksums
         run: cd dist && sha256sum * | tee SHA256SUMS

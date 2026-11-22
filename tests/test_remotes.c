@@ -38,7 +38,7 @@ static void loadKnownFailures(const char *path) {
   fseek(f, 0, SEEK_SET);
   knownFailures = calloc(size + 2, 1);
   knownFailures[0] = '\n';
-  if (fread(knownFailures + 1, 1, size, f) != (size_t)size)
+  if (fread(knownFailures + 1, 1, size, f) != (size_t) size)
     exit(2);
   fclose(f);
 }
@@ -84,8 +84,8 @@ static long countValues(const char *code, const symbolDefinition *symbols, size_
   return count;
 }
 
-static int checkCode(const char *path, const char *what, const char *code,
-                     const symbolDefinition *symbols, size_t symbolCount) {
+static int checkCode(const char *path, const char *what, const char *code, const symbolDefinition *symbols,
+                     size_t symbolCount) {
   long values = countValues(code, symbols, symbolCount);
   int ok = 1;
   if (values < 0) {
@@ -134,8 +134,7 @@ static void checkKeys(const char *path, const symbolDefinition *symbols, size_t 
           printf("FAIL %s: unknown plugin %s\n", path, plugin);
         }
         char what[256];
-        snprintf(what, sizeof(what), "%s=%s%s", features[f].name, features[f].value,
-                 toggled ? " (toggled)" : "");
+        snprintf(what, sizeof(what), "%s=%s%s", features[f].name, features[f].value, toggled ? " (toggled)" : "");
         checkCode(path, what, code, symbols, symbolCount);
         free(code);
       }
@@ -237,9 +236,7 @@ static int hasJsonSuffix(const char *name) {
   return len > 5 && strcmp(name + len - 5, ".json") == 0;
 }
 
-static int compareStrings(const void *a, const void *b) {
-  return strcmp(*(char *const *)a, *(char *const *)b);
-}
+static int compareStrings(const void *a, const void *b) { return strcmp(*(char *const *) a, *(char *const *) b); }
 
 static void checkPath(const char *path) {
   struct stat st;
@@ -293,7 +290,7 @@ int main(int argc, char *argv[]) {
     checkPath(argv[i]);
   unloadConfig();
   free(knownFailures);
-  printf("%zu remotes, %zu keys, %zu test vectors (%zu known failures)\n",
-         remotesChecked, keysChecked, vectorsChecked, knownFailed);
+  printf("%zu remotes, %zu keys, %zu test vectors (%zu known failures)\n", remotesChecked, keysChecked, vectorsChecked,
+         knownFailed);
   return TEST_RESULT();
 }

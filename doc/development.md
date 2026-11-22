@@ -13,16 +13,20 @@ The code is in two parts. `components/irlingo/` holds the portable core, which
 also an ESPHome component for the ESP32 will compile: it must not use anything
 specific to Linux. `src/` holds the Linux parts: the command line, finding
 installed remotes, the toggle state file and the transmitter backends. CMake
-builds them as the libraries `irlingo_core` and `irlingo_linux`.
+builds them as the libraries `irlingo_core` and `irlingo_linux`, with `src/log.c` as
+`irlingo_log`.
 
 | Path | Contents |
 |------|----------|
-| `components/irlingo/config.c` | loading a remote from a file or from text: symbols, template, features, overrides, variants, toggle |
+| `components/irlingo/irremote.c` | a remote, parsed from a file or from text, as a handle (`irRemote`): symbols, template, features, overrides, variants, toggle; encoding a code into a buffer the caller gives, without allocating |
 | `components/irlingo/checksum.c` | the declarative `checksums` |
 | `components/irlingo/pulses.c` | turning a code into pulse and space durations |
 | `components/irlingo/plugins.c`, `components/irlingo/hvac_panasonic_plugin.c` | remote plugins |
-| `components/irlingo/log.c`, `components/irlingo/parson.c` | logging, the JSON parser |
+| `components/irlingo/parson.c` | the JSON parser |
+| `components/irlingo/log.h` | log messages: `log_log()` comes from `src/log.c` on Linux and `irlingo_log.cpp` in ESPHome |
 | `src/irlingo.c` | the command line |
+| `src/config.c` | the command's one loaded remote (`loadConfig()` and friends), on top of `irremote.c` |
+| `src/log.c` | logging on Linux (rxi's log.c) |
 | `src/remotes.c` | finding remotes by name |
 | `src/lirc.c`, `src/transmitter.c`, `src/irslinger.c` | the `lirc`, `gpiod` and `pigpio` backends |
 | `src/state.c` | the toggle state file |
@@ -82,11 +86,60 @@ tests/esphome/check.sh --compile
 The component's C++ and Python files are only compiled by ESPHome, not by the
 CMake build.
 
+## Code style
+
+The C and C++ code follows ESPHome's style, set by `.clang-format` (taken from
+ESPHome): two spaces, no tabs, 120 columns. Code copied from other projects
+(parson, rxi's log.c) keeps its own style and is listed in
+`.clang-format-ignore`. CI checks the formatting with clang-format 23.1.3, the
+version ESPHome uses:
+
+```
+pip install clang-format==23.1.3
+git ls-files '*.c' '*.h' '*.cpp' | xargs clang-format -i
+```
+
+The ESPHome component's C++ is also checked with ESPHome's clang-tidy checks
+(`.clang-tidy`, taken from ESPHome). They need the compilation database of an
+ESP32 build, so compile the component first:
+
+```
+pip install clang-tidy==23.1.4
+tests/esphome/check.sh --compile
+tools/clang-tidy.py            # --fix applies the fixes clang-tidy offers
+```
+
+The portable C core is left out: ESPHome's C++ naming rules do not fit its C
+API. `tools/clang-tidy.py --c` checks it too.
+
+The commit that reformatted the code is in `.git-blame-ignore-revs`; to have
+`git blame` skip it locally, run
+`git config blame.ignoreRevsFile .git-blame-ignore-revs`.
+
+## API documentation
+
+The C and C++ code is documented with Doxygen, as ESPHome's is: comments
+written `///` before a declaration in a header become the API reference,
+whose front page is `doc/api.md`. The `Doxyfile` has ESPHome's settings; it
+needs Doxygen 1.12 or newer (Ubuntu packages 1.9.8, so CI downloads Doxygen's
+own build). A broken documentation comment fails the build, while undocumented
+code is fine.
+
+```
+cmake -B build -DIRLINGO_DOCS=ON    # or build the target docs on its own
+cmake --build build                 # HTML in build/docs/api-docs
+```
+
+`cmake --build build --target docs_archive` packs the HTML into
+`irlingo-api-docs-<version>.tar.gz`, which CI builds on every run and attaches
+to releases. The documentation of `master` is published on GitHub Pages:
+<https://mortenmathiasen.github.io/irlingo/>.
+
 ## Continuous integration
 
-GitHub Actions runs the tests for all three backends, with AddressSanitizer and UndefinedBehaviorSanitizer, measures coverage, runs the tests of the `armv6`, `armv7` and `aarch64` builds under qemu, and runs
+GitHub Actions runs the tests for all three backends, with AddressSanitizer and UndefinedBehaviorSanitizer, measures coverage, runs the tests of the `armv6`, `armv7` and `aarch64` builds under qemu, checks the formatting with clang-format, builds the API documentation (and publishes that of `master` on GitHub Pages), and runs
 `tests/esphome/check.sh --compile` with the ESPHome version given in the
-workflow. A separate workflow converts the LIRC database again with `tools/lirc2irlingo.py` and fails if `conf/remotes` differs from the result, and compares the converter with LIRC's own `irsimsend`.
+workflow, followed by `tools/clang-tidy.py`. A separate workflow converts the LIRC database again with `tools/lirc2irlingo.py` and fails if `conf/remotes` differs from the result, and compares the converter with LIRC's own `irsimsend`.
 
 ## Adding a remote to irlingo
 

@@ -26,22 +26,22 @@ from esphome import automation
 import esphome.codegen as cg
 from esphome.components import remote_transmitter
 import esphome.config_validation as cv
-from esphome.const import CONF_FILE, CONF_ID
+from esphome.const import CONF_FILE, CONF_ID, CONF_REPEAT, CONF_TIMES, CONF_WAIT_TIME
 from esphome.core import CORE, Lambda
 import esphome.final_validate as fv
 
 DOMAIN = "irlingo"
+CODEOWNERS = ["@mortenmathiasen"]
 DEPENDENCIES = ["remote_transmitter"]
+MULTI_CONF = True
 
 CONF_REMOTE = "remote"
 CONF_REMOTE_ID = "remote_id"
 CONF_TRANSMITTER_ID = "transmitter_id"
 CONF_FEATURES = "features"
-CONF_REPEAT = "repeat"
-CONF_TIMES = "times"
-CONF_WAIT_TIME = "wait_time"
 
-# Remotes over this size work, but use much of the heap while being parsed
+# Remotes over this size work, but use much of the heap: each remote is parsed
+# once when the device starts and kept in memory
 LARGE_REMOTE = 64 * 1024
 
 irlingo_ns = cg.esphome_ns.namespace("irlingo")
@@ -111,7 +111,7 @@ REMOTE_SCHEMA = cv.All(
     _validate_remote,
 )
 
-CONFIG_SCHEMA = cv.ensure_list(REMOTE_SCHEMA)
+CONFIG_SCHEMA = REMOTE_SCHEMA
 
 
 def remote_name(conf):
@@ -149,16 +149,17 @@ def _check_features(remote_name, remote, features):
 
 
 def _final_validate(config):
-    """Check the features of every irlingo.send action in the configuration"""
-    remotes = {str(conf[CONF_ID]): conf for conf in config}
+    """Check the features of every irlingo.send action using this remote"""
 
     def walk(node):
         if isinstance(node, dict):
             for key, value in node.items():
-                if key == "irlingo.send" and isinstance(value, dict):
-                    conf = remotes.get(str(value[CONF_REMOTE_ID]))
-                    if conf is not None:
-                        check_features(conf, value.get(CONF_FEATURES, {}))
+                if (
+                    key == "irlingo.send"
+                    and isinstance(value, dict)
+                    and str(value[CONF_REMOTE_ID]) == str(config[CONF_ID])
+                ):
+                    check_features(config, value.get(CONF_FEATURES, {}))
                 walk(value)
         elif isinstance(node, list):
             for value in node:
@@ -172,21 +173,20 @@ FINAL_VALIDATE_SCHEMA = _final_validate
 
 
 async def to_code(config):
-    for conf in config:
-        var = cg.new_Pvariable(conf[CONF_ID])
-        await cg.register_component(var, conf)
-        transmitter = await cg.get_variable(conf[CONF_TRANSMITTER_ID])
-        cg.add(var.set_transmitter(transmitter))
-        text = json.dumps(load_remote(conf), separators=(",", ":"))
-        if len(text) > LARGE_REMOTE:
-            cv.LOGGER.warning(
-                "Remote %s is %d bytes; parsing it on the device needs about 1.5 times that "
-                "in free memory",
-                conf[CONF_ID],
-                len(text),
-            )
-        cg.add(var.set_remote(text))
-        cg.add(var.set_name(conf.get(CONF_REMOTE) or Path(str(conf[CONF_FILE])).name))
+    var = cg.new_Pvariable(config[CONF_ID])
+    await cg.register_component(var, config)
+    transmitter = await cg.get_variable(config[CONF_TRANSMITTER_ID])
+    cg.add(var.set_transmitter(transmitter))
+    text = json.dumps(load_remote(config), separators=(",", ":"))
+    if len(text) > LARGE_REMOTE:
+        cv.LOGGER.warning(
+            "Remote %s is %d bytes; the device keeps it parsed, which needs about 1.5 "
+            "times that in free memory",
+            config[CONF_ID],
+            len(text),
+        )
+    cg.add(var.set_remote(text))
+    cg.add(var.set_name(config.get(CONF_REMOTE) or Path(str(config[CONF_FILE])).name))
 
 
 # Send the code several times, e.g. for Sony remotes, whose devices ignore a

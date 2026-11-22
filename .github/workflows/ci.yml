@@ -284,13 +284,15 @@ jobs:
       - name: Install ESPHome
         run: pip install "esphome==$ESPHOME_VERSION"
 
-      # The ESP32 toolchain and framework ESPHome downloads
+      # The toolchains and frameworks ESPHome downloads for the chips
+      # (ESP32 family, ESP8266, RP2040)
       - uses: actions/cache@v4
         with:
           path: |
             ~/.platformio
             ~/.cache/esphome
-          key: esphome-${{ env.ESPHOME_VERSION }}-esp32
+          key: esphome-${{ env.ESPHOME_VERSION }}-chips-${{ hashFiles('tests/esphome/platforms/*.yaml') }}
+          restore-keys: esphome-${{ env.ESPHOME_VERSION }}-
 
       - name: Check and compile the component
         run: tests/esphome/check.sh --compile

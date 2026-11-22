@@ -10,7 +10,9 @@ static int apply(const char *json, const char *code, char **out) {
   JSON_Value *value = json_parse_string(json);
   CHECK(value != NULL);
   *out = strdup(code);
-  int result = applyChecksums(json_value_get_array(value), *out);
+  size_t *bitPos = (size_t *) malloc((strlen(code) + 1) * sizeof(size_t));
+  int result = applyChecksums(json_value_get_array(value), *out, bitPos);
+  free(bitPos);
   json_value_free(value);
   return result;
 }
@@ -101,7 +103,8 @@ static void test_applied_in_order(void) {
 static void test_no_checksums(void) {
   CHECK_CHECKSUM("[]", "10101010", "10101010");
   char code[] = "10101010";
-  CHECK_EQ_INT(0, applyChecksums(NULL, code));
+  size_t bitPos[sizeof(code)];
+  CHECK_EQ_INT(0, applyChecksums(NULL, code, bitPos));
   CHECK_EQ_STR("10101010", code);
 }
 

@@ -69,6 +69,11 @@ if(IRLINGO_COVERAGE)
   add_link_options(--coverage)
 endif()
 
+# Where the portable core's log messages go: log_log() (log.h). On Linux
+# rxi's log.c prints them; the ESPHome component has its own log_log().
+add_library(irlingo_log STATIC src/log.c)
+target_include_directories(irlingo_log PUBLIC components/irlingo)
+
 # The portable core in components/irlingo/: loading remotes, features,
 # overrides, variants, checksums, plugins and turning codes into pulses. The
 # ESPHome component compiles the same files, so they must not use anything
@@ -78,15 +83,16 @@ add_library(irlingo_core STATIC
   components/irlingo/plugins.c
   components/irlingo/checksum.c
   components/irlingo/pulses.c
-  components/irlingo/log.c
-  components/irlingo/config.c
+  components/irlingo/irremote.c
   components/irlingo/parson.c)
 target_include_directories(irlingo_core PUBLIC components/irlingo)
+target_link_libraries(irlingo_core PUBLIC irlingo_log)
 
 # The Linux parts: finding installed remotes, the toggle state file and the
 # transmitter backends. Everything except main() is shared by irlingo and
 # the tests.
 add_library(irlingo_linux STATIC
+  src/config.c
   src/remotes.c
   src/state.c
   src/irslinger.c

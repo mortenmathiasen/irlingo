@@ -13,16 +13,20 @@ The code is in two parts. `components/irlingo/` holds the portable core, which
 also an ESPHome component for the ESP32 will compile: it must not use anything
 specific to Linux. `src/` holds the Linux parts: the command line, finding
 installed remotes, the toggle state file and the transmitter backends. CMake
-builds them as the libraries `irlingo_core` and `irlingo_linux`.
+builds them as the libraries `irlingo_core` and `irlingo_linux`, with `src/log.c` as
+`irlingo_log`.
 
 | Path | Contents |
 |------|----------|
-| `components/irlingo/config.c` | loading a remote from a file or from text: symbols, template, features, overrides, variants, toggle |
+| `components/irlingo/irremote.c` | a remote, parsed from a file or from text, as a handle (`irRemote`): symbols, template, features, overrides, variants, toggle; encoding a code into a buffer the caller gives, without allocating |
 | `components/irlingo/checksum.c` | the declarative `checksums` |
 | `components/irlingo/pulses.c` | turning a code into pulse and space durations |
 | `components/irlingo/plugins.c`, `components/irlingo/hvac_panasonic_plugin.c` | remote plugins |
-| `components/irlingo/log.c`, `components/irlingo/parson.c` | logging, the JSON parser |
+| `components/irlingo/parson.c` | the JSON parser |
+| `components/irlingo/log.h` | log messages: `log_log()` comes from `src/log.c` on Linux and `irlingo_log.cpp` in ESPHome |
 | `src/irlingo.c` | the command line |
+| `src/config.c` | the command's one loaded remote (`loadConfig()` and friends), on top of `irremote.c` |
+| `src/log.c` | logging on Linux (rxi's log.c) |
 | `src/remotes.c` | finding remotes by name |
 | `src/lirc.c`, `src/transmitter.c`, `src/irslinger.c` | the `lirc`, `gpiod` and `pigpio` backends |
 | `src/state.c` | the toggle state file |

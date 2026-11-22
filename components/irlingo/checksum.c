@@ -1,7 +1,5 @@
-#include <stdlib.h>
 #include <string.h>
 #include "checksum.h"
-#include "config.h"
 #include "pulses.h"
 #include "log.h"
 
@@ -56,78 +54,80 @@ static void writeUnit(char *code, const size_t *bitPos, long index, int width,
     code[bitPos[index * width + i]] = value & (1u << (msbFirst ? width - 1 - i : i)) ? one : zero;
 }
 
-// Read a list of unit numbers into units (to be freed), its length in *count
-static int readUnitList(const JSON_Array *array, const char *name, long **units, size_t *count)
+// A list of unit numbers: those of a JSON array, or count numbers from first
+typedef struct {
+  const JSON_Array *array;
+  long first;
+  size_t count;
+} unitList;
+
+static long unitAt(const unitList *list, size_t i)
 {
-  *count = json_array_get_count(array);
-  if (!array || !*count) {
+  return list->array ? (long)json_array_get_number(list->array, i) : list->first + (long)i;
+}
+
+// Check a JSON list of unit numbers and use it as list
+static int readUnitList(const JSON_Array *array, const char *name, unitList *list)
+{
+  list->array = array;
+  list->first = 0;
+  list->count = json_array_get_count(array);
+  if (!array || !list->count) {
     log_fatal("Checksum \"%s\" must be a list of unit numbers", name);
     return 1;
   }
-  *units = (long *) malloc(*count * sizeof(long));
-  for (size_t i = 0; *units && i < *count; i++) {
+  for (size_t i = 0; i < list->count; i++) {
     double d = json_array_get_number(array, i);
     if (json_value_get_type(json_array_get_value(array, i)) != JSONNumber ||
 	d < 0 || d > MAX_COMMAND_SIZE || d != (double)(long)d) {
       log_fatal("Checksum \"%s\" must hold whole numbers from 0 to %d", name, MAX_COMMAND_SIZE);
-      free(*units);
-      *units = NULL;
       return 1;
     }
-    (*units)[i] = (long)d;
   }
-  return *units == NULL;
+  return 0;
 }
 
 // The units a checksum covers, from "data" or from "from" to "to". Returns
-// the list (to be freed) and its length in *count, or NULL when invalid.
-static long *readCoveredUnits(const JSON_Object *spec, size_t *count)
+// 0 when they are valid.
+static int readCoveredUnits(const JSON_Object *spec, unitList *list)
 {
   JSON_Value *data = json_object_get_value(spec, "data");
   int hasRange = json_object_get_value(spec, "from") || json_object_get_value(spec, "to");
   if (data && hasRange) {
     log_fatal("Checksum needs either \"data\" or \"from\" and \"to\", not both");
-    return NULL;
+    return 1;
   }
-
-  long *units = NULL;
-  if (data) {
-    readUnitList(json_value_get_array(data), "data", &units, count);
-    return units;
-  }
+  if (data)
+    return readUnitList(json_value_get_array(data), "data", list);
 
   long long from = 0, to = 0;
   if (readNumber(spec, "from", 1, MAX_COMMAND_SIZE, &from) ||
       readNumber(spec, "to", 1, MAX_COMMAND_SIZE, &to))
-    return NULL;
+    return 1;
   if (from > to) {
     log_fatal("Checksum \"from\" (%lld) is after \"to\" (%lld)", from, to);
-    return NULL;
+    return 1;
   }
-  *count = to - from + 1;
-  units = (long *) malloc(*count * sizeof(long));
-  for (size_t i = 0; units && i < *count; i++)
-    units[i] = from + i;
-  return units;
+  list->array = NULL;
+  list->first = from;
+  list->count = to - from + 1;
+  return 0;
 }
 
-// The units the result is written into, "at": a unit number or a list
-static long *readResultUnits(const JSON_Object *spec, size_t *count)
+// The units the result is written into, "at": a unit number or a list.
+// Returns 0 when they are valid.
+static int readResultUnits(const JSON_Object *spec, unitList *list)
 {
   JSON_Value *v = json_object_get_value(spec, "at");
-  long *units = NULL;
-  if (v && json_value_get_type(v) == JSONArray) {
-    readUnitList(json_value_get_array(v), "at", &units, count);
-    return units;
-  }
+  if (v && json_value_get_type(v) == JSONArray)
+    return readUnitList(json_value_get_array(v), "at", list);
   long long at = 0;
   if (readNumber(spec, "at", 1, MAX_COMMAND_SIZE, &at))
-    return NULL;
-  units = (long *) malloc(sizeof(long));
-  if (units)
-    units[0] = at;
-  *count = 1;
-  return units;
+    return 1;
+  list->array = NULL;
+  list->first = at;
+  list->count = 1;
+  return 0;
 }
 
 static unsigned reflect(unsigned value, int width)
@@ -191,14 +191,13 @@ static int applyChecksum(const JSON_Object *spec, char *code, size_t *bitPos)
   int width = unit && strcmp(unit, "nibble") == 0 ? 4 : 8;
   const char *unitName = width == 4 ? "nibble" : "byte";
 
-  size_t atCount = 0;
-  long *at = readResultUnits(spec, &atCount);
-  if (!at)
+  unitList at;
+  if (readResultUnits(spec, &at))
     return 1;
+  size_t atCount = at.count;
   int resultWidth = width * atCount;
   if (resultWidth > 32) {
     log_fatal("Checksum result of %d bits is wider than 32 bits", resultWidth);
-    free(at);
     return 1;
   }
   unsigned mask = resultWidth >= 32 ? 0xffffffffu : (1u << resultWidth) - 1;
@@ -210,13 +209,10 @@ static int applyChecksum(const JSON_Object *spec, char *code, size_t *bitPos)
       readNumber(spec, "poly", kind == CRC, mask, &poly) ||
       readFlag(spec, "invert", &invert) ||
       readFlag(spec, "negate", &negate) ||
-      readFlag(spec, "reflect", &reflected)) {
-    free(at);
+      readFlag(spec, "reflect", &reflected))
     return 1;
-  }
   if (kind != CRC && (json_object_get_value(spec, "poly") || json_object_get_value(spec, "reflect"))) {
     log_fatal("Checksum \"poly\" and \"reflect\" are only for \"crc\"");
-    free(at);
     return 1;
   }
 
@@ -224,7 +220,6 @@ static int applyChecksum(const JSON_Object *spec, char *code, size_t *bitPos)
   if (json_object_get_value(spec, "bitorder") &&
       (!bitorder || (strcmp(bitorder, "lsb") != 0 && strcmp(bitorder, "msb") != 0))) {
     log_fatal("Checksum \"bitorder\" must be \"lsb\" or \"msb\"");
-    free(at);
     return 1;
   }
   int msbFirst = bitorder && strcmp(bitorder, "msb") == 0;
@@ -233,7 +228,6 @@ static int applyChecksum(const JSON_Object *spec, char *code, size_t *bitPos)
   if (json_object_get_value(spec, "bits") &&
       (!bits || strlen(bits) != 2 || bits[0] == bits[1])) {
     log_fatal("Checksum \"bits\" must be two different symbols, e.g. \"01\"");
-    free(at);
     return 1;
   }
   char zero = bits ? bits[0] : '0';
@@ -243,16 +237,13 @@ static int applyChecksum(const JSON_Object *spec, char *code, size_t *bitPos)
   if (json_object_get_value(spec, "restart") &&
       (!restart || strchr(restart, zero) || strchr(restart, one))) {
     log_fatal("Checksum \"restart\" must be a string of symbols that are not bits");
-    free(at);
     return 1;
   }
 
-  size_t count = 0;
-  long *units = readCoveredUnits(spec, &count);
-  if (!units) {
-    free(at);
+  unitList units;
+  if (readCoveredUnits(spec, &units))
     return 1;
-  }
+  size_t count = units.count;
 
   // Positions of the bit symbols in the code, without the bits of a partial
   // unit before a restart symbol
@@ -271,35 +262,32 @@ static int applyChecksum(const JSON_Object *spec, char *code, size_t *bitPos)
   int result = 0;
   long last = 0;
   for (size_t k = 0; k < atCount && !result; k++) {
-    if (at[k] > last)
-      last = at[k];
+    if (unitAt(&at, k) > last)
+      last = unitAt(&at, k);
     for (size_t j = 0; j < k; j++)
-      if (at[j] == at[k]) {
-	log_fatal("Checksum writes %s %ld twice", unitName, at[k]);
+      if (unitAt(&at, j) == unitAt(&at, k)) {
+	log_fatal("Checksum writes %s %ld twice", unitName, unitAt(&at, k));
 	result = 1;
       }
     for (size_t i = 0; i < count && !result; i++)
-      if (units[i] == at[k]) {
-	log_fatal("Checksum %s %ld is one of the %ss it covers", unitName, at[k], unitName);
+      if (unitAt(&units, i) == unitAt(&at, k)) {
+	log_fatal("Checksum %s %ld is one of the %ss it covers", unitName, unitAt(&at, k), unitName);
 	result = 1;
       }
   }
   for (size_t i = 0; i < count; i++)
-    if (units[i] > last)
-      last = units[i];
+    if (unitAt(&units, i) > last)
+      last = unitAt(&units, i);
   if (!result && last >= unitCount) {
     log_fatal("Checksum uses %s %ld, but the code has %ld %ss", unitName, last, unitCount, unitName);
     result = 1;
   }
-  if (result) {
-    free(units);
-    free(at);
+  if (result)
     return 1;
-  }
 
   unsigned value = kind == CRC && reflected ? reflect(init, resultWidth) : (unsigned)init;
   for (size_t i = 0; i < count; i++) {
-    unsigned u = readUnit(code, bitPos, units[i], width, msbFirst, one);
+    unsigned u = readUnit(code, bitPos, unitAt(&units, i), width, msbFirst, one);
     switch (kind) {
     case SUM: value += u; break;
     case XOR: value ^= u; break;
@@ -307,7 +295,6 @@ static int applyChecksum(const JSON_Object *spec, char *code, size_t *bitPos)
     default: value = crcUnit(value, u, width, poly, resultWidth, reflected, mask); break;
     }
   }
-  free(units);
   if (invert)
     value = ~value;
   if (negate)
@@ -317,21 +304,15 @@ static int applyChecksum(const JSON_Object *spec, char *code, size_t *bitPos)
   // unit holds the lowest bits, with "msb" the highest
   for (size_t k = 0; k < atCount; k++) {
     int shift = width * (msbFirst ? atCount - 1 - k : k);
-    writeUnit(code, bitPos, at[k], width, msbFirst, zero, one, (value >> shift) & ((1u << width) - 1));
+    writeUnit(code, bitPos, unitAt(&at, k), width, msbFirst, zero, one, (value >> shift) & ((1u << width) - 1));
   }
-  log_trace("Checksum %s of %zu %ss into %s %ld: 0x%x", type, count, unitName, unitName, at[0], value);
-  free(at);
+  log_trace("Checksum %s of %zu %ss into %s %ld: 0x%x", type, count, unitName, unitName, unitAt(&at, 0), value);
   return 0;
 }
 
-int applyChecksums(const JSON_Array *checksums, char *code)
+int applyChecksums(const JSON_Array *checksums, char *code, size_t *bitPos)
 {
   size_t count = json_array_get_count(checksums);
-  if (!count)
-    return 0;
-  size_t *bitPos = (size_t *) malloc((strlen(code) + 1) * sizeof(size_t));
-  if (!bitPos)
-    return 1;
   int result = 0;
   for (size_t i = 0; i < count && !result; i++) {
     const JSON_Object *spec = json_array_get_object(checksums, i);
@@ -342,11 +323,5 @@ int applyChecksums(const JSON_Array *checksums, char *code)
       result = applyChecksum(spec, code, bitPos);
     }
   }
-  free(bitPos);
   return result;
-}
-
-int applyConfigChecksums(char *code)
-{
-  return applyChecksums(loadChecksums(), code);
 }

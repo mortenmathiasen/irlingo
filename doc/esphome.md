@@ -9,6 +9,7 @@ and gives Home Assistant buttons and air conditioner (climate) entities. See
 [the plan](esphome-plan.md) for what is next.
 
 - [Requirements](#requirements)
+- [Supported chips](#supported-chips)
 - [Configuration](#configuration)
 - [Sending codes](#sending-codes)
 - [Buttons](#buttons)
@@ -20,12 +21,60 @@ and gives Home Assistant buttons and air conditioner (climate) entities. See
 
 ## Requirements
 
-- An ESP32 board (the classic ESP32; other chips are untested) with an IR LED
-  circuit, see [Connecting an IR LED](hardware.md). To test the board first, see
-  [Testing with a visible LED](hardware.md#testing-with-a-visible-led).
+- An ESP32 board with an IR LED circuit, see
+  [Connecting an IR LED](hardware.md). The classic ESP32 is tested; other chips
+  compile, see [Supported chips](#supported-chips). To test the board first,
+  see [Testing with a visible LED](hardware.md#testing-with-a-visible-led).
 - ESPHome 2026.11 or newer.
 - Internet access when compiling: ESPHome fetches the component, with the
   remotes, from the irlingo repository on GitHub.
+
+## Supported chips
+
+The component uses only ESPHome's `remote_transmitter`, so it builds for every
+chip that has it. CI compiles it for these, with an air conditioner climate
+entity, a button and the `irlingo.send` action
+([tests/esphome/platforms](../tests/esphome/platforms)):
+
+| Chip | Example board | Status | RAM / flash in the CI build |
+|------|---------------|--------|-----------------------------|
+| ESP32 | ESP32-DevKitC | tested on hardware | 13% / 15% |
+| ESP32-S3 | ESP32-S3-DevKitC-1 | compiles, not yet tested | 16% / 15% |
+| ESP32-C3 | ESP32-C3-DevKitM-1 | compiles, not yet tested | 17% / 15% |
+| ESP32-C6 | ESP32-C6-DevKitC-1 | compiles, not yet tested | 13% / 14% |
+| RP2040 | Raspberry Pi Pico W | compiles, not yet tested | 29% / 35% |
+| ESP8266 | Wemos D1 mini | compiles, not yet tested; little memory | 57% / 29% |
+
+The RAM figures are static use when compiling. Each remote also takes about
+1.4 times its file size from the heap at start-up (see
+[Memory and limits](#memory-and-limits)): 16 KB for `hvac_panasonic`, 15 to
+55 KB for the other air conditioner remotes. The ESP32 family has room for
+several remotes. The ESP8266 has about 80 KB in all, of which Wi-Fi takes a
+good part, so use one small remote there, or prefer an ESP32. If you try a
+chip marked "not yet tested", please
+[report](https://github.com/mortenmathiasen/irlingo/issues) whether it works.
+
+The chip is set as for any ESPHome device:
+
+```yaml
+esp32:                       # ESP32, -S3, -C3, -C6: the board decides the chip
+  board: esp32-s3-devkitc-1
+  framework:
+    type: esp-idf
+```
+
+```yaml
+esp8266:
+  board: d1_mini
+```
+
+```yaml
+rp2040:
+  board: rpipicow
+```
+
+The pins differ per chip, see
+[ESP32 and other ESPHome chips](hardware.md#esp32-and-other-esphome-chips).
 
 ## Configuration
 

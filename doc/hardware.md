@@ -117,12 +117,16 @@ Any free GPIO pin works; use its number wherever 17 appears. See
 [Finding the right pins](#finding-the-right-pins) for how to find the pins on
 your board and which are free.
 
-## ESP32
+## ESP32 and other ESPHome chips
 
 irlingo runs on the ESP32 as an ESPHome component, see
-[irlingo on ESPHome](esphome.md). The wiring is the same as for the Raspberry
-Pi, and works with ESPHome's own
+[irlingo on ESPHome](esphome.md). It also compiles for the ESP32-S3, -C3 and
+-C6, the ESP8266 and the RP2040, see
+[Supported chips](esphome.md#supported-chips). The wiring is the same as for
+the Raspberry Pi, and works with ESPHome's own
 [remote_transmitter](https://esphome.io/components/remote_transmitter/) too.
+All these chips have 3.3 V outputs, which switch the transistor through the
+1 kΩ resistor as on the Pi.
 
 | Signal | ESP32 dev board pin |
 |--------|---------------------|
@@ -149,6 +153,21 @@ remote_transmitter:
 The board's 3.3 V pin can also power the LED, but it is fed by the board's
 voltage regulator, which the Wi-Fi radio needs too. Use 5 V for the transistor
 circuit.
+
+### Other chips
+
+| Chip | 5 V | Transmitter pin | Avoid |
+|------|-----|-----------------|-------|
+| ESP32-S3 | `5V` or `VIN` | `GPIO4` | GPIO 0, 3, 45 and 46 (boot), 19 and 20 (USB), 26 to 32 (flash; on modules with octal PSRAM also 33 to 37) |
+| ESP32-C3 | `5V` | `GPIO4` | GPIO 2, 8 and 9 (boot), 12 to 17 (flash), 18 and 19 (USB) |
+| ESP32-C6 | `5V` | `GPIO18` | GPIO 8, 9 and 15 (boot), 4 and 5 (JTAG selection), 12 and 13 (USB), 24 to 30 (flash) |
+| ESP8266, e.g. Wemos D1 mini | `5V` | `GPIO4` (`D2`) or `GPIO5` (`D1`) | GPIO 0, 2 and 15 (boot), 6 to 11 (flash), 16 (no interrupts) |
+| RP2040, e.g. Raspberry Pi Pico W | `VBUS` (pin 40), the USB supply | `GPIO4` (pin 6) | GPIO 23 to 25 and 29 on the Pico W, which the Wi-Fi chip uses |
+
+These are the usual rules; your board's pinout diagram has the final word, see
+[Finding the right pins](#finding-the-right-pins). On the ESP32 family ESPHome
+sends with the RMT peripheral, which can use any output pin; on the ESP8266
+and RP2040 it switches the pin in software.
 
 ## Finding the right pins
 

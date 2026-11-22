@@ -18,8 +18,8 @@ irlingo --remote hvac_panasonic --feature temperature=21 --feature mode=HEAT
 The [documentation](doc/README.md) has a guide for each step:
 
 * [Installation](doc/installation.md): hardware, packages, enabling the IR transmitter, building from source
-* [Connecting an IR LED](doc/hardware.md): circuits, parts and pins for a Raspberry Pi or an ESP32
-* [irlingo on ESPHome](doc/esphome.md): sending irlingo remotes from an ESP32
+* [Connecting an IR LED](doc/hardware.md): circuits, parts and pins for a Raspberry Pi, an ESP32 or another ESPHome chip
+* [irlingo on ESPHome](doc/esphome.md): sending irlingo remotes from an ESP32, ESP8266 or RP2040
 * [Usage](doc/usage.md): finding a remote, sending keys and air conditioner settings
 * [Managing remotes](doc/remotes.md): adding remotes, converting LIRC files, deriving remotes from recordings
 * [Remote file format](doc/remote-format.md): every setting of a remote, with a worked example
@@ -85,7 +85,14 @@ The tool is developed in C to support deployment on any platform.
 The tool transmits IR on:
 * Raspberry Pi (all models, including Pi 5) using the Linux kernel IR transmitter driver (the default, used by the release packages) or [libgpiod](https://git.kernel.org/pub/scm/libs/libgpiod/libgpiod.git/)
 * Raspberry Pi 1–4 and Zero models using [pigpio](http://abyz.me.uk/rpi/pigpio/)
-* ESP32 with [ESPHome](https://esphome.io/), as an external component, see [irlingo on ESPHome](doc/esphome.md)
+* microcontrollers with [ESPHome](https://esphome.io/), as an external component, see [irlingo on ESPHome](doc/esphome.md):
+
+  | Chip | Status |
+  |------|--------|
+  | ESP32 | tested on hardware |
+  | ESP32-S3, ESP32-C3, ESP32-C6 | compiled by CI, not yet tested on hardware |
+  | RP2040 (e.g. Raspberry Pi Pico W) | compiled by CI, not yet tested on hardware |
+  | ESP8266 | compiled by CI, not yet tested; little memory, so only one small remote, see [Supported chips](doc/esphome.md#supported-chips) |
 * more platforms to come
 
 ### Prerequisites

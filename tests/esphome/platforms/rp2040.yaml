@@ -1,0 +1,9 @@
+# irlingo on the rp2040, compiled by CI (tests/esphome/check.sh). Not meant to be flashed.
+esphome:
+  name: irlingo-rp2040
+
+rp2040:
+  board: rpipicow
+
+packages:
+  common: !include common.yaml

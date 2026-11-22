@@ -49,7 +49,7 @@ irlingo --list | grep -i samsung
 irlingo --list | wc -l
 ```
 
-The release packages contain only irlingo's own remotes. If a manufacturer is missing, add its remotes with `irlingo-remotes`, see [Managing remotes](remotes.md#adding-remotes-to-an-installation). If your remote is not there at all, convert a LIRC file or record it, see [Managing remotes](remotes.md).
+The release packages contain only irlingo's own remotes, the 47 air conditioner remotes. If a manufacturer is missing, add its remotes with `irlingo-remotes`, see [Managing remotes](remotes.md#adding-remotes-to-an-installation). If your remote is not there at all, convert a LIRC file or record it, see [Managing remotes](remotes.md).
 
 ## Features: keys and settings
 

@@ -64,7 +64,7 @@ static int readUnitList(const JSON_Array *array, const char *name, long **units,
     log_fatal("Checksum \"%s\" must be a list of unit numbers", name);
     return 1;
   }
-  *units = malloc(*count * sizeof(long));
+  *units = (long *) malloc(*count * sizeof(long));
   for (size_t i = 0; *units && i < *count; i++) {
     double d = json_array_get_number(array, i);
     if (json_value_get_type(json_array_get_value(array, i)) != JSONNumber ||
@@ -105,7 +105,7 @@ static long *readCoveredUnits(const JSON_Object *spec, size_t *count)
     return NULL;
   }
   *count = to - from + 1;
-  units = malloc(*count * sizeof(long));
+  units = (long *) malloc(*count * sizeof(long));
   for (size_t i = 0; units && i < *count; i++)
     units[i] = from + i;
   return units;
@@ -123,7 +123,7 @@ static long *readResultUnits(const JSON_Object *spec, size_t *count)
   long long at = 0;
   if (readNumber(spec, "at", 1, MAX_COMMAND_SIZE, &at))
     return NULL;
-  units = malloc(sizeof(long));
+  units = (long *) malloc(sizeof(long));
   if (units)
     units[0] = at;
   *count = 1;
@@ -329,7 +329,7 @@ int applyChecksums(const JSON_Array *checksums, char *code)
   size_t count = json_array_get_count(checksums);
   if (!count)
     return 0;
-  size_t *bitPos = malloc((strlen(code) + 1) * sizeof(size_t));
+  size_t *bitPos = (size_t *) malloc((strlen(code) + 1) * sizeof(size_t));
   if (!bitPos)
     return 1;
   int result = 0;

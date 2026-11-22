@@ -114,11 +114,11 @@ The packages contain irlingo's own remotes. Add the remotes you need from the LI
 
 Install the Debian package, e.g. for a Pi Zero W:
 ```
-sudo apt install ./irlingo_3.2.0_armv6.deb
+sudo apt install ./irlingo_3.2.1_armv6.deb
 ```
 or extract the tarball into `/`:
 ```
-sudo tar -xzf irlingo-3.2.0-armv6.tar.gz -C / --strip-components=1
+sudo tar -xzf irlingo-3.2.1-armv6.tar.gz -C / --strip-components=1
 ```
 
 Then enable the kernel IR transmitter as described below.
@@ -231,12 +231,13 @@ GitHub Actions runs the tests for all three backends, with AddressSanitizer and 
 
 ### Releases
 
-To release, update `VERSION` in `CMakeLists.txt`, commit, and push a matching tag:
+To release, update `VERSION` in `CMakeLists.txt`, commit, and push a matching signed tag (setting up a signing key is described in [Development](doc/development.md#releases)):
 ```
-git tag v3.2.0
-git push origin v3.2.0
+git commit -S -m "Release 3.2.1"
+git tag -s v3.2.1 -m "irlingo 3.2.1"
+git push origin master v3.2.1
 ```
-GitHub Actions then runs all tests, builds the packages for every Raspberry Pi architecture and the archive of all remotes (`irlingo-remotes-<version>.tar.gz`), and publishes them with checksums as a GitHub release.
+GitHub Actions then runs all tests, builds the packages for every Raspberry Pi architecture, the archive of all remotes (`irlingo-remotes-<version>.tar.gz`) and the API documentation (`irlingo-api-docs-<version>.tar.gz`), and publishes them with checksums as a GitHub release.
 
 ### Upgrading from PIIR 2.x
 

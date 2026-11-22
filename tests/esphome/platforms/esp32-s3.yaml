@@ -1,0 +1,11 @@
+# irlingo on the esp32-s3, compiled by CI (tests/esphome/check.sh). Not meant to be flashed.
+esphome:
+  name: irlingo-esp32-s3
+
+esp32:
+  board: esp32-s3-devkitc-1
+  framework:
+    type: esp-idf
+
+packages:
+  common: !include common.yaml

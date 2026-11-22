@@ -1,0 +1,9 @@
+# irlingo on the esp8266, compiled by CI (tests/esphome/check.sh). Not meant to be flashed.
+esphome:
+  name: irlingo-esp8266
+
+esp8266:
+  board: d1_mini
+
+packages:
+  common: !include common.yaml

@@ -3,7 +3,7 @@
 # - tests/esphome/full.yaml, which uses every part of it, must be valid
 # - variants of it with mistakes must fail with the expected message
 # - with --compile, full.yaml and doc/examples/esphome-irlingo.yaml must
-#   compile for ESP32
+#   compile for ESP32, and platforms/*.yaml for the other chips
 # usage: tests/esphome/check.sh [--compile]   (ESPHome must be installed)
 set -eu
 
@@ -40,6 +40,17 @@ invalid() {
   rm -f "$here/case.yaml"
 }
 
+# compile CONFIG NAME: CONFIG must compile; prints its RAM and flash use
+compile() {
+  if esphome compile "$1" > "$work/out" 2>&1; then
+    echo "ok   compiling $2 ($(tr '\r' '\n' < "$work/out" | sed 's/\x1b\[[0-9;]*m//g' | grep -E '^(RAM|Flash):' | sed 's/ *\[.*\] */ /' | tr '\n' ' ' | sed 's/ $//'))"
+  else
+    echo "FAIL compiling $2"
+    grep -E "error|Error" "$work/out" | tail -20
+    failures=$((failures + 1))
+  fi
+}
+
 valid "$here/full.yaml" "full configuration"
 invalid "wrong value" "has no feature mode=TURBO" 's/            mode: HEAT/            mode: TURBO/'
 invalid "wrong feature" "has no feature 'speed'" 's/            temperature: "21"/            speed: "21"/'
@@ -64,13 +75,12 @@ if [ "${1:-}" = "--compile" ]; then
     else
       name="full configuration"
     fi
-    if esphome compile "$config" > "$work/out" 2>&1; then
-      echo "ok   compiling $name"
-    else
-      echo "FAIL compiling $name"
-      grep -E "error|Error" "$work/out" | tail -20
-      failures=$((failures + 1))
-    fi
+    compile "$config" "$name"
+  done
+  # The same component on the other chips
+  for config in "$here"/platforms/*.yaml; do
+    [ "$(basename "$config")" = common.yaml ] && continue
+    compile "$config" "platforms/$(basename "$config")"
   done
 fi
 

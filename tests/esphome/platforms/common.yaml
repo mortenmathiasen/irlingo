@@ -1,0 +1,41 @@
+# The parts of the irlingo component every chip in this directory compiles:
+# an air conditioner as a climate entity, a button and the send action.
+# Included by the chip configurations next to it (tests/esphome/check.sh).
+logger:
+
+external_components:
+  - source:
+      type: local
+      path: ../../../components
+    components: [irlingo]
+
+remote_transmitter:
+  id: ir_tx
+  pin: GPIO4
+  carrier_duty_percent: 50%
+
+irlingo:
+  - id: aircon
+    remote: panasonic/hvac_panasonic
+  - id: tv
+    remote: sony/RM-ED011
+
+climate:
+  - platform: irlingo
+    remote_id: aircon
+    name: Air conditioner
+    fixed: {option: AUTO, updown: AUTO, leftright: AUTO}
+
+button:
+  - platform: irlingo
+    remote_id: tv
+    name: TV power
+    features: {key: KEY_POWER}
+
+interval:
+  - interval: 1h
+    then:
+      - irlingo.send:
+          remote_id: tv
+          features:
+            key: KEY_MUTE

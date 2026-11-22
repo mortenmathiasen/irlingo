@@ -86,9 +86,26 @@ tests/esphome/check.sh --compile
 The component's C++ and Python files are only compiled by ESPHome, not by the
 CMake build.
 
+## Code style
+
+The C and C++ code follows ESPHome's style, set by `.clang-format` (taken from
+ESPHome): two spaces, no tabs, 120 columns. Code copied from other projects
+(parson, rxi's log.c) keeps its own style and is listed in
+`.clang-format-ignore`. CI checks the formatting with clang-format 23.1.3, the
+version ESPHome uses:
+
+```
+pip install clang-format==23.1.3
+git ls-files '*.c' '*.h' '*.cpp' | xargs clang-format -i
+```
+
+The commit that reformatted the code is in `.git-blame-ignore-revs`; to have
+`git blame` skip it locally, run
+`git config blame.ignoreRevsFile .git-blame-ignore-revs`.
+
 ## Continuous integration
 
-GitHub Actions runs the tests for all three backends, with AddressSanitizer and UndefinedBehaviorSanitizer, measures coverage, runs the tests of the `armv6`, `armv7` and `aarch64` builds under qemu, and runs
+GitHub Actions runs the tests for all three backends, with AddressSanitizer and UndefinedBehaviorSanitizer, measures coverage, runs the tests of the `armv6`, `armv7` and `aarch64` builds under qemu, checks the formatting with clang-format, and runs
 `tests/esphome/check.sh --compile` with the ESPHome version given in the
 workflow. A separate workflow converts the LIRC database again with `tools/lirc2irlingo.py` and fails if `conf/remotes` differs from the result, and compares the converter with LIRC's own `irsimsend`.
 

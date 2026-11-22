@@ -209,8 +209,8 @@ Measured on an ESP32 with `panasonic/hvac_panasonic`:
 |-|-|
 | Flash for irlingo (code) | about 44 KB |
 | Flash per remote | its size without test vectors: 12 KB for `hvac_panasonic`; most remotes 2-14 KB |
-| Memory while sending | about 1.4 times the remote's size, 16 KB for `hvac_panasonic`, freed afterwards |
-| Time to send | about 10 ms to parse and encode |
+| Memory per remote | about 1.4 times the remote's size, 16 KB for `hvac_panasonic`: each remote is parsed once at start-up and kept, with buffers for its longest code |
+| Memory while sending | none: sending allocates nothing |
 
 ESPHome warns about remotes over 64 KB. Remotes with hard-coded codes from
 `ir2irlingo --fallback` can be megabytes, too large for an ESP32.

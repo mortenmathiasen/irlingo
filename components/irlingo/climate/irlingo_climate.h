@@ -21,7 +21,7 @@ class IrlingoClimate : public climate::Climate, public Component, public Parente
   void add_temperature(float temperature, const char *value) { this->temperatures_.emplace_back(temperature, value); }
   void set_fan_feature(const char *name) { this->fan_feature_ = name; }
   void add_fan_value(const char *value);
-  void add_fixed(const char *name, const char *value) { this->fixed_.emplace_back(name, value); }
+  void add_fixed(const char *name, const char *value) { this->fixed_.push_back(featureT{name, value}); }
 #ifdef USE_SENSOR
   void set_sensor(sensor::Sensor *sensor) { this->sensor_ = sensor; }
 #endif
@@ -36,13 +36,15 @@ class IrlingoClimate : public climate::Climate, public Component, public Parente
   void transmit_();
   const char *nearest_temperature_();
 
-  std::vector<std::pair<climate::ClimateMode, FeatureValues>> modes_;
+  std::vector<std::pair<climate::ClimateMode, std::vector<featureT>>> modes_;
   const char *temperature_feature_{nullptr};
   std::vector<std::pair<float, const char *>> temperatures_;  // sorted
   const char *fan_feature_{nullptr};
   const char *fan_auto_{nullptr};
   std::vector<const char *> fan_custom_;
-  FeatureValues fixed_;
+  std::vector<featureT> fixed_;
+  // The features of one code, room for all of them reserved in setup()
+  std::vector<featureT> values_;
 #ifdef USE_SENSOR
   sensor::Sensor *sensor_{nullptr};
 #endif

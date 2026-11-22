@@ -1,13 +1,10 @@
 #ifndef CONFIG_H
 #define CONFIG_H
 
-#include "symboldefinition.h"
-#include "parson.h"
+// The irlingo command's remote: one remote at a time, loaded from a file
+// or JSON text, on top of the portable irRemote functions (irremote.h).
 
-typedef struct q {
-  const char *name;
-  const char *value;
-} featureT;
+#include "irremote.h"
 
 //Load configuration from file
 void loadConfig(const char *configfilepath);
@@ -17,6 +14,8 @@ void loadConfig(const char *configfilepath);
 void loadConfigString(const char *json);
 void unloadConfig();
 int isConfigLoaded();
+// The loaded remote, NULL when none is
+irRemote *loadedRemote(void);
 
 size_t getSymboldefinitionsCount();
 
@@ -30,6 +29,7 @@ int hasFeatureNameAndValue(const char *featureName, const char *featureValue);
 
 void loadConfigSymbols(symbolDefinition configSymbols[]);
 void loadTemplateCode(const char **symbolString);
+// The code for these features (see irRemoteEncode()), allocated: free it
 void loadFeaturedCode(const featureT *features,
 		      char **featuredCode);
 int hasToggle();
@@ -44,7 +44,11 @@ void loadDutyCycle(double *dutycycle);
 // The "checksums" array of the definition (the remote or one of its
 // variants) the last loadFeaturedCode() used, NULL when it has none (see
 // checksum.h)
-JSON_Array *loadChecksums(void);
+const JSON_Array *loadChecksums(void);
 int hasVariants(void);
+
+// Apply the checksums of the loaded remote, if it has any (see
+// applyChecksums())
+int applyConfigChecksums(char *code);
 
 #endif

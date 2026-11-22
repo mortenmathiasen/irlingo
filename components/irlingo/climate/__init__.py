@@ -22,7 +22,7 @@ becomes Home Assistant's "auto"; its other values are offered by name.
 import esphome.codegen as cg
 from esphome.components import climate, sensor
 import esphome.config_validation as cv
-from esphome.const import CONF_ID, CONF_SENSOR
+from esphome.const import CONF_ID, CONF_SENSOR, CONF_TEMPERATURE
 from esphome.core import CORE
 import esphome.final_validate as fv
 
@@ -39,7 +39,6 @@ from .. import (
 DEPENDENCIES = ["irlingo"]
 
 CONF_MODES = "modes"
-CONF_TEMPERATURE = "temperature"
 CONF_FAN = "fan"
 CONF_FIXED = "fixed"
 

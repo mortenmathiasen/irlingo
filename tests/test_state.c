@@ -41,7 +41,7 @@ static void test_state_file_location(void) {
 }
 
 static void test_read_write(void) {
-  CHECK_EQ_INT(0, readToggleState(file, "/remotes/a.json"));   // no file yet
+  CHECK_EQ_INT(0, readToggleState(file, "/remotes/a.json"));  // no file yet
   CHECK_EQ_INT(0, writeToggleState(file, "/remotes/a.json", 1));
   CHECK_EQ_INT(1, readToggleState(file, "/remotes/a.json"));
   CHECK_EQ_INT(0, readToggleState(file, "/remotes/b.json"));
@@ -49,7 +49,7 @@ static void test_read_write(void) {
   CHECK_EQ_INT(0, writeToggleState(file, "/remotes/a.json", 0));
   CHECK_EQ_INT(0, readToggleState(file, "/remotes/a.json"));
   CHECK_EQ_INT(1, readToggleState(file, "/remotes/b.json"));
-  CHECK_EQ_INT(0, writeToggleState(file, "/remotes/a.json", 5));   // any true value is 1
+  CHECK_EQ_INT(0, writeToggleState(file, "/remotes/a.json", 5));  // any true value is 1
   CHECK_EQ_INT(1, readToggleState(file, "/remotes/a.json"));
 
   // One line per remote
@@ -63,7 +63,7 @@ static void test_read_write(void) {
 
 static void test_ignores_garbage(void) {
   FILE *f = fopen(file, "w");
-  fputs("garbage\n1 /remotes/c.json", f);   // no newline at the end
+  fputs("garbage\n1 /remotes/c.json", f);  // no newline at the end
   fclose(f);
   CHECK_EQ_INT(1, readToggleState(file, "/remotes/c.json"));
   CHECK_EQ_INT(0, writeToggleState(file, "/remotes/d.json", 1));

@@ -79,7 +79,7 @@ static void test_unload(void) {
   CHECK(isConfigLoaded());
   unloadConfig();
   CHECK(!isConfigLoaded());
-  unloadConfig(); // twice is harmless
+  unloadConfig();  // twice is harmless
   CHECK(!isConfigLoaded());
 }
 
@@ -115,7 +115,7 @@ static void test_missing_optional_device(void) {
   unloadConfig();
   loadConfig(PROJECT_DIR "/conf/remotes/panasonic/hvac_panasonic.json");
   CHECK(isConfigLoaded());
-  const char *device = (const char *)1;
+  const char *device = (const char *) 1;
   loadDevice(&device);
   CHECK(device == NULL);
 }
@@ -242,13 +242,13 @@ static void test_minimal_remote(void) {
   CHECK_EQ_INT(0, getAllFeaturesCount());
   CHECK_EQ_INT(0, getSymboldefinitionsCount());
   symbolDefinition none[1];
-  loadConfigSymbols(none);   // logs that there are no symbol definitions
+  loadConfigSymbols(none);  // logs that there are no symbol definitions
   char *code = 0;
   featureT features[1] = {{0, 0}};
   loadFeaturedCode(features, &code);
   CHECK_EQ_STR("", code);
   free(code);
-  const char *plugin = (const char *)1;
+  const char *plugin = (const char *) 1;
   loadPlugin(&plugin);
   CHECK(plugin == NULL);
 }

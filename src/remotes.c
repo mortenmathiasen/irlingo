@@ -43,10 +43,10 @@ static void scan(const char *dir, const char *prefix, remoteListT *list, int dep
     struct stat st;
     if (stat(path, &st) == 0) {
       if (S_ISDIR(st.st_mode)) {
-	scan(path, name, list, depth + 1);
+        scan(path, name, list, depth + 1);
       } else if (S_ISREG(st.st_mode) && hasSuffix(name)) {
-	name[strlen(name) - strlen(SUFFIX)] = 0;
-	addName(list, name);
+        name[strlen(name) - strlen(SUFFIX)] = 0;
+        addName(list, name);
       }
     }
     free(name);
@@ -55,9 +55,7 @@ static void scan(const char *dir, const char *prefix, remoteListT *list, int dep
   closedir(d);
 }
 
-static int compareNames(const void *a, const void *b) {
-  return strcmp(*(char *const *)a, *(char *const *)b);
-}
+static int compareNames(const void *a, const void *b) { return strcmp(*(char *const *) a, *(char *const *) b); }
 
 static void sortUnique(remoteListT *list) {
   if (!list->count)
@@ -99,8 +97,7 @@ static char *remoteFile(const char *dir, const char *name) {
   return path;
 }
 
-size_t findRemote(const char *const dirs[], size_t dirCount, const char *name,
-		  char **path, remoteListT *matches) {
+size_t findRemote(const char *const dirs[], size_t dirCount, const char *name, char **path, remoteListT *matches) {
   *path = NULL;
   if (matches) {
     matches->names = NULL;

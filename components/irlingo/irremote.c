@@ -14,8 +14,7 @@ struct irRemote {
 };
 
 // A parsed remote, or NULL when it is not a JSON object
-static irRemote *useValue(JSON_Value *value, const char *name)
-{
+static irRemote *useValue(JSON_Value *value, const char *name) {
   if (json_value_get_type(value) != JSONObject) {
     log_error("JSON file %s root not an object", name);
     if (value)
@@ -37,18 +36,15 @@ static irRemote *useValue(JSON_Value *value, const char *name)
   return remote;
 }
 
-irRemote *irRemoteParse(const char *json, const char *name)
-{
+irRemote *irRemoteParse(const char *json, const char *name) {
   return useValue(json ? json_parse_string(json) : NULL, name ? name : "(text)");
 }
 
-irRemote *irRemoteParseFile(const char *path)
-{
+irRemote *irRemoteParseFile(const char *path) {
   return useValue(path ? json_parse_file(path) : NULL, path ? path : "(no file)");
 }
 
-void irRemoteFree(irRemote *remote)
-{
+void irRemoteFree(irRemote *remote) {
   if (!remote)
     return;
   json_value_free(remote->value);
@@ -56,37 +52,27 @@ void irRemoteFree(irRemote *remote)
   free(remote);
 }
 
-const char *irRemoteName(const irRemote *remote)
-{
-  return remote->name;
-}
+const char *irRemoteName(const irRemote *remote) { return remote->name; }
 
-static JSON_Object *featuresObject(const irRemote *remote)
-{
+static JSON_Object *featuresObject(const irRemote *remote) {
   JSON_Object *features = json_object_get_object(remote->root, "features");
   if (!features)
     log_error("JSON file %s features object within root object", remote->name);
   return features;
 }
 
-size_t irRemoteFeatureCount(const irRemote *remote)
-{
-  return json_object_get_count(featuresObject(remote));
-}
+size_t irRemoteFeatureCount(const irRemote *remote) { return json_object_get_count(featuresObject(remote)); }
 
-const char *irRemoteFeatureName(const irRemote *remote, size_t index)
-{
+const char *irRemoteFeatureName(const irRemote *remote, size_t index) {
   return json_object_get_name(featuresObject(remote), index);
 }
 
-static JSON_Object *featureObject(const irRemote *remote, size_t index)
-{
+static JSON_Object *featureObject(const irRemote *remote, size_t index) {
   JSON_Object *features = featuresObject(remote);
   return json_object_get_object(features, json_object_get_name(features, index));
 }
 
-int irRemoteFeatureIndex(const irRemote *remote, const char *name, size_t *index)
-{
+int irRemoteFeatureIndex(const irRemote *remote, const char *name, size_t *index) {
   size_t count = irRemoteFeatureCount(remote);
   for (size_t i = 0; i < count; i++)
     if (strcmp(name, irRemoteFeatureName(remote, i)) == 0) {
@@ -96,18 +82,15 @@ int irRemoteFeatureIndex(const irRemote *remote, const char *name, size_t *index
   return 0;
 }
 
-size_t irRemoteFeatureValueCount(const irRemote *remote, size_t index)
-{
+size_t irRemoteFeatureValueCount(const irRemote *remote, size_t index) {
   return json_object_get_count(featureObject(remote, index));
 }
 
-const char *irRemoteFeatureValueName(const irRemote *remote, size_t index, size_t valueIndex)
-{
+const char *irRemoteFeatureValueName(const irRemote *remote, size_t index, size_t valueIndex) {
   return json_object_get_name(featureObject(remote, index), valueIndex);
 }
 
-int irRemoteHasFeature(const irRemote *remote, const char *name, const char *value)
-{
+int irRemoteHasFeature(const irRemote *remote, const char *name, const char *value) {
   size_t index;
   if (!irRemoteFeatureIndex(remote, name, &index))
     return 0;
@@ -118,13 +101,11 @@ int irRemoteHasFeature(const irRemote *remote, const char *name, const char *val
   return 0;
 }
 
-size_t irRemoteSymbolCount(const irRemote *remote)
-{
+size_t irRemoteSymbolCount(const irRemote *remote) {
   return json_object_get_count(json_object_get_object(remote->root, "symboldefinitions"));
 }
 
-void irRemoteSymbols(const irRemote *remote, symbolDefinition symbols[])
-{
+void irRemoteSymbols(const irRemote *remote, symbolDefinition symbols[]) {
   JSON_Object *definitions = json_object_get_object(remote->root, "symboldefinitions");
   if (!definitions) {
     log_error("Symbol definitions configuraiton not found");
@@ -140,53 +121,33 @@ void irRemoteSymbols(const irRemote *remote, symbolDefinition symbols[])
   }
 }
 
-const char *irRemoteTemplate(const irRemote *remote)
-{
-  return json_object_get_string(remote->root, "template");
-}
+const char *irRemoteTemplate(const irRemote *remote) { return json_object_get_string(remote->root, "template"); }
 
-const char *irRemoteDescription(const irRemote *remote)
-{
-  return json_object_get_string(remote->root, "description");
-}
+const char *irRemoteDescription(const irRemote *remote) { return json_object_get_string(remote->root, "description"); }
 
-const char *irRemoteDevice(const irRemote *remote)
-{
+const char *irRemoteDevice(const irRemote *remote) {
   return json_object_dotget_string(remote->root, "transmitter.device");
 }
 
-const char *irRemotePlugin(const irRemote *remote)
-{
-  return json_object_get_string(remote->root, "plugin");
-}
+const char *irRemotePlugin(const irRemote *remote) { return json_object_get_string(remote->root, "plugin"); }
 
-int irRemoteFrequency(const irRemote *remote)
-{
-  return (int) json_object_get_number(remote->root, "frequency");
-}
+int irRemoteFrequency(const irRemote *remote) { return (int) json_object_get_number(remote->root, "frequency"); }
 
-double irRemoteDutyCycle(const irRemote *remote)
-{
-  return json_object_get_number(remote->root, "dutycycle");
-}
+double irRemoteDutyCycle(const irRemote *remote) { return json_object_get_number(remote->root, "dutycycle"); }
 
-unsigned int irRemoteOutPin(const irRemote *remote)
-{
+unsigned int irRemoteOutPin(const irRemote *remote) {
   return (unsigned int) json_object_dotget_number(remote->root, "transmitter.outpin");
 }
 
-int irRemoteHasToggle(const irRemote *remote)
-{
+int irRemoteHasToggle(const irRemote *remote) {
   return json_object_get_count(json_object_get_object(remote->root, "toggle")) > 0;
 }
 
-int irRemoteHasVariants(const irRemote *remote)
-{
+int irRemoteHasVariants(const irRemote *remote) {
   return json_array_get_count(json_object_get_array(remote->root, "variants")) > 0;
 }
 
-size_t irRemoteMaxCodeLength(const irRemote *remote)
-{
+size_t irRemoteMaxCodeLength(const irRemote *remote) {
   const char *text = json_object_get_string(remote->root, "template");
   size_t longest = text ? strlen(text) : 0;
   JSON_Array *variants = json_object_get_array(remote->root, "variants");
@@ -198,15 +159,13 @@ size_t irRemoteMaxCodeLength(const irRemote *remote)
   return longest;
 }
 
-const JSON_Array *irRemoteChecksums(const irRemote *remote)
-{
+const JSON_Array *irRemoteChecksums(const irRemote *remote) {
   return json_object_get_array(remote->selected ? remote->selected : remote->root, "checksums");
 }
 
 // Copy the symbols of an overlay to code, except spaces. A shorter overlay
 // leaves the rest of the code as it is.
-static void applyOverlay(const char *overlay, char *code, size_t codeLength)
-{
+static void applyOverlay(const char *overlay, char *code, size_t codeLength) {
   size_t length = strlen(overlay);
   if (length > codeLength)
     log_warn("Feature code '%s' is longer than the template (%zu symbols)", overlay, codeLength);
@@ -216,8 +175,7 @@ static void applyOverlay(const char *overlay, char *code, size_t codeLength)
 }
 
 // The requested value of a feature, NULL when it is not requested
-static const char *requestedValue(const featureT *features, size_t count, const char *name)
-{
+static const char *requestedValue(const featureT *features, size_t count, const char *name) {
   const char *value = 0;
   for (size_t i = 0; i < count; i++)
     if (features[i].name && features[i].value && strcmp(features[i].name, name) == 0)
@@ -226,8 +184,7 @@ static const char *requestedValue(const featureT *features, size_t count, const 
 }
 
 // All features of a "when" object are requested with its values
-static int whenMatches(JSON_Object *when, const featureT *features, size_t count)
-{
+static int whenMatches(JSON_Object *when, const featureT *features, size_t count) {
   for (size_t j = 0; j < json_object_get_count(when); j++) {
     const char *name = json_object_get_name(when, j);
     const char *wanted = json_object_get_string(when, name);
@@ -240,9 +197,8 @@ static int whenMatches(JSON_Object *when, const featureT *features, size_t count
 
 // Apply the "overrides" of a definition whose "when" features are all
 // requested with the given values, in order, after the features
-static void applyOverrides(const irRemote *remote, JSON_Object *definition, const featureT *features,
-			   size_t count, char *code, size_t codeLength)
-{
+static void applyOverrides(const irRemote *remote, JSON_Object *definition, const featureT *features, size_t count,
+                           char *code, size_t codeLength) {
   JSON_Array *overrides = json_object_get_array(definition, "overrides");
   for (size_t i = 0; i < json_array_get_count(overrides); i++) {
     JSON_Object *override = json_array_get_object(overrides, i);
@@ -259,8 +215,7 @@ static void applyOverrides(const irRemote *remote, JSON_Object *definition, cons
 
 // The first of the "variants" whose "when" features are all requested, or
 // the remote itself
-static JSON_Object *selectDefinition(const irRemote *remote, const featureT *features, size_t count)
-{
+static JSON_Object *selectDefinition(const irRemote *remote, const featureT *features, size_t count) {
   JSON_Array *variants = json_object_get_array(remote->root, "variants");
   for (size_t i = 0; features && i < json_array_get_count(variants); i++) {
     JSON_Object *variant = json_array_get_object(variants, i);
@@ -275,8 +230,7 @@ static JSON_Object *selectDefinition(const irRemote *remote, const featureT *fea
   return remote->root;
 }
 
-int irRemoteEncode(irRemote *remote, const featureT *features, int toggled, char *code, size_t size)
-{
+int irRemoteEncode(irRemote *remote, const featureT *features, int toggled, char *code, size_t size) {
   // Requested features are stored at the index of the remote's features
   size_t requestedCount = irRemoteFeatureCount(remote);
   JSON_Object *definition = selectDefinition(remote, features, requestedCount);
@@ -289,8 +243,7 @@ int irRemoteEncode(irRemote *remote, const featureT *features, int toggled, char
   }
   size_t templateLength = strlen(templateCode);
   if (templateLength >= size) {
-    log_error("Code of %s needs %zu symbols, room for %zu", remote->name, templateLength,
-	      size ? size - 1 : 0);
+    log_error("Code of %s needs %zu symbols, room for %zu", remote->name, templateLength, size ? size - 1 : 0);
     return 1;
   }
   memcpy(code, templateCode, templateLength + 1);
@@ -298,8 +251,8 @@ int irRemoteEncode(irRemote *remote, const featureT *features, int toggled, char
     return 0;
 
   // A variant has its own features, if any: their codes refer to its template
-  JSON_Object *featureDefinitions = definition == remote->root ? featuresObject(remote)
-    : json_object_get_object(definition, "features");
+  JSON_Object *featureDefinitions =
+      definition == remote->root ? featuresObject(remote) : json_object_get_object(definition, "features");
   size_t featuresCount = json_object_get_count(featureDefinitions);
   for (size_t configIndex = 0; configIndex < featuresCount; configIndex++) {
     const char *featureName = json_object_get_name(featureDefinitions, configIndex);
@@ -310,11 +263,10 @@ int irRemoteEncode(irRemote *remote, const featureT *features, int toggled, char
     JSON_Object *featureObject = json_object_get_object(featureDefinitions, featureName);
     const char *featureString = json_object_get_string(featureObject, featureValue);
     if (featureString && toggled && definition == remote->root) {
-      JSON_Object *toggleObject = json_object_get_object(
-	json_object_get_object(remote->root, "toggle"), featureName);
+      JSON_Object *toggleObject = json_object_get_object(json_object_get_object(remote->root, "toggle"), featureName);
       const char *toggleString = json_object_get_string(toggleObject, featureValue);
       if (toggleString)
-	featureString = toggleString;
+        featureString = toggleString;
     }
     if (!featureString) {
       log_error("Feature '%s'='%s' not found in %s", featureName, featureValue, remote->name);

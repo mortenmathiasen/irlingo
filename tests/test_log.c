@@ -11,7 +11,7 @@ static void test_level_names(void) {
 
 static void test_unknown_level_logs_nothing(void) {
   CHECK(log_level_int("LOUD") > LOG_NOTHING);
-  CHECK(log_level_int("debug") > LOG_NOTHING); // names are case sensitive
+  CHECK(log_level_int("debug") > LOG_NOTHING);  // names are case sensitive
 }
 
 static void test_set_level(void) {
@@ -39,8 +39,8 @@ static void test_callback_level_filter(void) {
 
 static int lockCalls = 0;
 static void countingLock(bool lock, void *udata) {
-  (void)lock;
-  (void)udata;
+  (void) lock;
+  (void) udata;
   lockCalls++;
 }
 
@@ -54,7 +54,7 @@ static void test_file_logging_and_lock(void) {
   log_warn("in the file %d", 7);
   log_set_lock(NULL, NULL);
   log_set_quiet(false);
-  CHECK_EQ_INT(4, lockCalls);   // lock and unlock for each message
+  CHECK_EQ_INT(4, lockCalls);  // lock and unlock for each message
 
   char text[256] = {0};
   rewind(f);

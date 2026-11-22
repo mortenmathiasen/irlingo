@@ -60,7 +60,7 @@ static void test_find_ambiguous(void) {
 
 static void test_find_missing(void) {
   const char *dirs[] = {REMOTES};
-  char *path = (char *)1;
+  char *path = (char *) 1;
   CHECK_EQ_INT(0, findRemote(dirs, 1, "nothing", &path, NULL));
   CHECK(path == NULL);
   CHECK_EQ_INT(0, findRemote(dirs, 1, "brand1/nothing", &path, NULL));

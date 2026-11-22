@@ -76,8 +76,11 @@ The converters are measured too when Python's `coverage` module is installed. CI
 installed (`pip install esphome`): `tests/esphome/full.yaml`, which uses every
 part of the component, must be valid, and variants of it with mistakes must fail
 with the expected messages. With `--compile` it also compiles `full.yaml` and
-`doc/examples/esphome-irlingo.yaml` for ESP32 (the first time, ESPHome downloads
-the ESP32 toolchain).
+`doc/examples/esphome-irlingo.yaml` for ESP32, and since 3.3.0
+`tests/esphome/platforms/*.yaml` for the ESP32-S3, -C3, -C6, ESP8266 and
+RP2040, printing the RAM and flash use of each (the first time, ESPHome
+downloads the toolchains). To add a chip, add a small YAML file there with its
+`esp32:`, `esp8266:` or `rp2040:` block that includes `common.yaml`.
 
 ```
 tests/esphome/check.sh --compile
@@ -145,16 +148,18 @@ workflow, followed by `tools/clang-tidy.py`. A separate workflow converts the LI
 
 1. Put it in `conf/remotes/<manufacturer>/<name>.json`. Remotes made for irlingo have no `source` setting; files with `source` are replaced by the LIRC conversion check.
 2. Add `tests`: codes recorded from the real remote (or the protocol's reference implementation), with the features they were sent for.
-3. To ship it in the release packages, add it to `IRLINGO_NATIVE_REMOTES` in `cmake/remotes.cmake`.
+3. To ship it in the release packages, name it `hvac_<model>.json`: since 3.3.0, `native` in `cmake/remotes.cmake` selects irlingo's own remotes by that name.
 4. Run the tests.
+
+The 44 air conditioner remotes for arduino-heatpumpir's models were derived with `tools/heatpumpir` and `ir2irlingo`; to derive one again, e.g. after a change in the library, see [Air conditioners supported by arduino-heatpumpir](remotes.md#air-conditioners-supported-by-arduino-heatpumpir).
 
 ## Releases
 
 Update `VERSION` in `CMakeLists.txt`, commit, and push a matching signed tag:
 ```
-git commit -S -m "Release 3.2.1"
-git tag -s v3.2.1 -m "irlingo 3.2.1"
-git push origin master v3.2.1
+git commit -S -m "Release 3.3.0"
+git tag -s v3.3.0 -m "irlingo 3.3.0"
+git push origin master v3.3.0
 ```
 
 GitHub Actions then runs all tests, builds the packages for every Raspberry Pi architecture, the archive of all remotes (`irlingo-remotes-<version>.tar.gz`) and the API documentation (`irlingo-api-docs-<version>.tar.gz`), and publishes them with checksums as a GitHub release.
@@ -174,4 +179,4 @@ and add the same public key to your GitHub account as a **signing key**
 `gh ssh-key add ~/.ssh/id_ed25519.pub --type signing`). To check a signature
 locally, list your key in an allowed signers file
 (`git config --global gpg.ssh.allowedSignersFile ~/.ssh/allowed_signers`) and
-run `git verify-tag v3.2.1`.
+run `git verify-tag v3.3.0`.

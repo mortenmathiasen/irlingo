@@ -120,6 +120,8 @@ Features are applied in the order they appear in the remote file, not the order 
 
 irlingo has 47 air conditioner and heat pump remotes, named `hvac_*`. The release packages contain all of them.
 
+Since irlingo 3.3.0: the 44 remotes for arduino-heatpumpir's models besides `hvac_nibe` and `hvac_carrier_nqv`. With an older version, copy the JSON file from [conf/remotes](../conf/remotes) and give its path to `--remote`.
+
 `panasonic/hvac_panasonic` was reverse engineered from a Panasonic remote (e.g. JKE models), with the features temperature, mode, option, fan, updown and leftright.
 
 The other 46 send what the [arduino-heatpumpir](https://github.com/ToniA/arduino-heatpumpir) library sends for its models, see [Managing remotes](remotes.md#air-conditioners-supported-by-arduino-heatpumpir). They all have the same features: `power` (ON, OFF), `mode` (AUTO, HEAT, COOL, DRY, FAN), `fan` (AUTO and speeds), `temperature`, `vertical` and `horizontal` (vane positions); the values depend on the model, see `--help`. They match the library's codes, but most have not been tried on the air conditioner itself; please report what works.

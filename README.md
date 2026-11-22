@@ -13,6 +13,14 @@ irlingo --remote sony/RM-ED011 --feature key=KEY_POWER
 irlingo --remote hvac_panasonic --feature temperature=21 --feature mode=HEAT
 ```
 
+## What's new in 3.3.0
+
+- **47 air conditioner and heat pump remotes**, 44 of them new: Daikin, Mitsubishi Electric and Mitsubishi Heavy, Fujitsu, Gree, Panasonic, Samsung, Toshiba, Hitachi, Midea, Hisense, Sharp, AUX, the generic ZH/LT-01 remote and more, one for each model of the [arduino-heatpumpir](https://github.com/ToniA/arduino-heatpumpir) library. They send the same codes as the library, and the ESPHome climate entity maps them without configuration. See [Setting an air conditioner](doc/usage.md#setting-an-air-conditioner).
+- **More ESPHome chips**: the component now compiles for the ESP32-S3, -C3, -C6, the ESP8266 and the RP2040, checked by CI. The classic ESP32 is the only one tested on hardware so far. See [Supported chips](doc/esphome.md#supported-chips).
+- **The release packages** contain all 47 air conditioner remotes, named `hvac_*`.
+
+All changes: [releases](https://github.com/mortenmathiasen/irlingo/releases).
+
 ## Documentation
 
 The [documentation](doc/README.md) has a guide for each step:
@@ -30,6 +38,7 @@ The [documentation](doc/README.md) has a guide for each step:
 
 ## Table of contents
 
+  * [What's new in 3.3.0](#whats-new-in-330)
   * [Documentation](#documentation)
   * [Features](#features)
     + [IR-protocol](#ir-protocol)
@@ -121,11 +130,11 @@ The packages contain irlingo's own remotes. Add the remotes you need from the LI
 
 Install the Debian package, e.g. for a Pi Zero W:
 ```
-sudo apt install ./irlingo_3.2.1_armv6.deb
+sudo apt install ./irlingo_3.3.0_armv6.deb
 ```
 or extract the tarball into `/`:
 ```
-sudo tar -xzf irlingo-3.2.1-armv6.tar.gz -C / --strip-components=1
+sudo tar -xzf irlingo-3.3.0-armv6.tar.gz -C / --strip-components=1
 ```
 
 Then enable the kernel IR transmitter as described below.
@@ -240,9 +249,9 @@ GitHub Actions runs the tests for all three backends, with AddressSanitizer and 
 
 To release, update `VERSION` in `CMakeLists.txt`, commit, and push a matching signed tag (setting up a signing key is described in [Development](doc/development.md#releases)):
 ```
-git commit -S -m "Release 3.2.1"
-git tag -s v3.2.1 -m "irlingo 3.2.1"
-git push origin master v3.2.1
+git commit -S -m "Release 3.3.0"
+git tag -s v3.3.0 -m "irlingo 3.3.0"
+git push origin master v3.3.0
 ```
 GitHub Actions then runs all tests, builds the packages for every Raspberry Pi architecture, the archive of all remotes (`irlingo-remotes-<version>.tar.gz`) and the API documentation (`irlingo-api-docs-<version>.tar.gz`), and publishes them with checksums as a GitHub release.
 

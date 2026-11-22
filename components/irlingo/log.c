@@ -49,33 +49,35 @@ static const char *level_colors[] = {
 
 
 static void stdout_callback(log_Event *ev) {
+  FILE *fp = (FILE *) ev->udata;
   char buf[16];
   buf[strftime(buf, sizeof(buf), "%H:%M:%S", ev->time)] = '\0';
 #ifdef LOG_USE_COLOR
   fprintf(
-    ev->udata, "%s %s%-5s\x1b[0m \x1b[90m%s:%d:\x1b[0m ",
+    fp, "%s %s%-5s\x1b[0m \x1b[90m%s:%d:\x1b[0m ",
     buf, level_colors[ev->level], level_strings[ev->level],
     ev->file, ev->line);
 #else
   fprintf(
-    ev->udata, "%s %-5s %s:%d: ",
+    fp, "%s %-5s %s:%d: ",
     buf, level_strings[ev->level], ev->file, ev->line);
 #endif
-  vfprintf(ev->udata, ev->fmt, ev->ap);
-  fprintf(ev->udata, "\n");
-  fflush(ev->udata);
+  vfprintf(fp, ev->fmt, ev->ap);
+  fprintf(fp, "\n");
+  fflush(fp);
 }
 
 
 static void file_callback(log_Event *ev) {
+  FILE *fp = (FILE *) ev->udata;
   char buf[64];
   buf[strftime(buf, sizeof(buf), "%Y-%m-%d %H:%M:%S", ev->time)] = '\0';
   fprintf(
-    ev->udata, "%s %-5s %s:%d: ",
+    fp, "%s %-5s %s:%d: ",
     buf, level_strings[ev->level], ev->file, ev->line);
-  vfprintf(ev->udata, ev->fmt, ev->ap);
-  fprintf(ev->udata, "\n");
-  fflush(ev->udata);
+  vfprintf(fp, ev->fmt, ev->ap);
+  fprintf(fp, "\n");
+  fflush(fp);
 }
 
 

@@ -132,11 +132,12 @@ cmake --build build                 # HTML in build/docs/api-docs
 
 `cmake --build build --target docs_archive` packs the HTML into
 `irlingo-api-docs-<version>.tar.gz`, which CI builds on every run and attaches
-to releases.
+to releases. The documentation of `master` is published on GitHub Pages:
+<https://mortenmathiasen.github.io/irlingo/>.
 
 ## Continuous integration
 
-GitHub Actions runs the tests for all three backends, with AddressSanitizer and UndefinedBehaviorSanitizer, measures coverage, runs the tests of the `armv6`, `armv7` and `aarch64` builds under qemu, checks the formatting with clang-format, builds the API documentation, and runs
+GitHub Actions runs the tests for all three backends, with AddressSanitizer and UndefinedBehaviorSanitizer, measures coverage, runs the tests of the `armv6`, `armv7` and `aarch64` builds under qemu, checks the formatting with clang-format, builds the API documentation (and publishes that of `master` on GitHub Pages), and runs
 `tests/esphome/check.sh --compile` with the ESPHome version given in the
 workflow, followed by `tools/clang-tidy.py`. A separate workflow converts the LIRC database again with `tools/lirc2irlingo.py` and fails if `conf/remotes` differs from the result, and compares the converter with LIRC's own `irsimsend`.
 

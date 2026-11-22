@@ -99,6 +99,19 @@ pip install clang-format==23.1.3
 git ls-files '*.c' '*.h' '*.cpp' | xargs clang-format -i
 ```
 
+The ESPHome component's C++ is also checked with ESPHome's clang-tidy checks
+(`.clang-tidy`, taken from ESPHome). They need the compilation database of an
+ESP32 build, so compile the component first:
+
+```
+pip install clang-tidy==23.1.4
+tests/esphome/check.sh --compile
+tools/clang-tidy.py            # --fix applies the fixes clang-tidy offers
+```
+
+The portable C core is left out: ESPHome's C++ naming rules do not fit its C
+API. `tools/clang-tidy.py --c` checks it too.
+
 The commit that reformatted the code is in `.git-blame-ignore-revs`; to have
 `git blame` skip it locally, run
 `git config blame.ignoreRevsFile .git-blame-ignore-revs`.
@@ -107,7 +120,7 @@ The commit that reformatted the code is in `.git-blame-ignore-revs`; to have
 
 GitHub Actions runs the tests for all three backends, with AddressSanitizer and UndefinedBehaviorSanitizer, measures coverage, runs the tests of the `armv6`, `armv7` and `aarch64` builds under qemu, checks the formatting with clang-format, and runs
 `tests/esphome/check.sh --compile` with the ESPHome version given in the
-workflow. A separate workflow converts the LIRC database again with `tools/lirc2irlingo.py` and fails if `conf/remotes` differs from the result, and compares the converter with LIRC's own `irsimsend`.
+workflow, followed by `tools/clang-tidy.py`. A separate workflow converts the LIRC database again with `tools/lirc2irlingo.py` and fails if `conf/remotes` differs from the result, and compares the converter with LIRC's own `irsimsend`.
 
 ## Adding a remote to irlingo
 

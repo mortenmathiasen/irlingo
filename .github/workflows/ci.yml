@@ -214,6 +214,7 @@ jobs:
     runs-on: ubuntu-24.04
     env:
       ESPHOME_VERSION: 2026.11.0
+      CLANG_TIDY_VERSION: 23.1.4
     steps:
       - uses: actions/checkout@v4
 
@@ -234,6 +235,14 @@ jobs:
 
       - name: Check and compile the component
         run: tests/esphome/check.sh --compile
+
+      # ESPHome's clang-tidy checks, on the compilation database of the
+      # build above, with the clang-tidy version ESPHome uses
+      - name: Install clang-tidy
+        run: pip install "clang-tidy==$CLANG_TIDY_VERSION"
+
+      - name: clang-tidy
+        run: tools/clang-tidy.py
 
   # The C and C++ code in ESPHome's style (.clang-format), with the
   # clang-format version ESPHome uses

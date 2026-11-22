@@ -17,7 +17,7 @@ void IrlingoClimate::add_mode_feature(climate::ClimateMode mode, const char *nam
       return;
     }
   }
-  this->modes_.push_back({mode, std::vector<featureT>{featureT{name, value}}});
+  this->modes_.emplace_back(mode, std::vector<featureT>{featureT{name, value}});
 }
 
 void IrlingoClimate::add_fan_value(const char *value) {
@@ -63,7 +63,7 @@ void IrlingoClimate::setup() {
     }
   }
   if (!this->temperatures_.empty())
-    this->target_temperature = std::atof(this->nearest_temperature_());
+    this->target_temperature = this->nearest_temperature_().first;
   this->publish_state();
 }
 
@@ -74,9 +74,10 @@ void IrlingoClimate::dump_config() {
     ESP_LOGCONFIG(TAG, "  Temperature: %s, %.1f to %.1f", this->temperature_feature_, this->temperatures_.front().first,
                   this->temperatures_.back().first);
   }
-  if (this->fan_feature_ != nullptr)
+  if (this->fan_feature_ != nullptr) {
     ESP_LOGCONFIG(TAG, "  Fan: %s, %u values", this->fan_feature_,
                   (unsigned) (this->fan_custom_.size() + (this->fan_auto_ != nullptr)));
+  }
 }
 
 climate::ClimateTraits IrlingoClimate::traits() {
@@ -116,17 +117,17 @@ void IrlingoClimate::control(const climate::ClimateCall &call) {
 }
 
 // The remote's temperature value nearest to the target
-const char *IrlingoClimate::nearest_temperature_() {
-  const char *best = this->temperatures_.front().second;
+const std::pair<float, const char *> &IrlingoClimate::nearest_temperature_() {
+  const auto *best = &this->temperatures_.front();
   float best_distance = INFINITY;
   for (auto &entry : this->temperatures_) {
     float distance = std::fabs(entry.first - this->target_temperature);
     if (distance < best_distance) {
       best_distance = distance;
-      best = entry.second;
+      best = &entry;
     }
   }
-  return best;
+  return *best;
 }
 
 void IrlingoClimate::transmit_() {
@@ -137,9 +138,9 @@ void IrlingoClimate::transmit_() {
       this->values_.insert(this->values_.end(), entry.second.begin(), entry.second.end());
   }
   if (this->temperature_feature_ != nullptr && !this->temperatures_.empty()) {
-    const char *value = this->nearest_temperature_();
-    this->target_temperature = std::atof(value);
-    this->values_.push_back(featureT{this->temperature_feature_, value});
+    const auto &temperature = this->nearest_temperature_();
+    this->target_temperature = temperature.first;
+    this->values_.push_back(featureT{this->temperature_feature_, temperature.second});
   }
   if (this->fan_feature_ != nullptr) {
     if (this->fan_mode.has_value() && *this->fan_mode == climate::CLIMATE_FAN_AUTO && this->fan_auto_ != nullptr) {

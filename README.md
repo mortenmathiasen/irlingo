@@ -602,7 +602,7 @@ We use [SemVer](http://semver.org/) for versioning. For the versions available, 
 
 * **Morten Mathiasen** - *Initial work* - [repositories](https://github.com/mortenmathiasen)
 
-See also the list of [contributors](https://github.com/irlingo/contributors) who participated in this project.
+See also the list of [contributors](https://github.com/mortenmathiasen/irlingo/graphs/contributors) who participated in this project.
 
 ## License
 

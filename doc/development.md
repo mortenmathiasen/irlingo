@@ -148,7 +148,7 @@ workflow, followed by `tools/clang-tidy.py`. A separate workflow converts the LI
 
 1. Put it in `conf/remotes/<manufacturer>/<name>.json`. Remotes made for irlingo have no `source` setting; files with `source` are replaced by the LIRC conversion check.
 2. Add `tests`: codes recorded from the real remote (or the protocol's reference implementation), with the features they were sent for.
-3. To ship it in the release packages, name it `hvac_<model>.json`: since 3.3.0, `native` in `cmake/remotes.cmake` selects irlingo's own remotes by that name.
+3. Name an air conditioner remote `hvac_<model>.json`: `native` in `cmake/remotes.cmake` selects irlingo's own remotes by that name. The release packages contain every remote.
 4. Run the tests.
 
 The 44 air conditioner remotes for arduino-heatpumpir's models were derived with `tools/heatpumpir` and `ir2irlingo`; to derive one again, e.g. after a change in the library, see [Air conditioners supported by arduino-heatpumpir](remotes.md#air-conditioners-supported-by-arduino-heatpumpir).
@@ -157,9 +157,9 @@ The 44 air conditioner remotes for arduino-heatpumpir's models were derived with
 
 Update `VERSION` in `CMakeLists.txt`, commit, and push a matching signed tag:
 ```
-git commit -S -m "Release 3.3.1"
-git tag -s v3.3.1 -m "irlingo 3.3.1"
-git push origin master v3.3.1
+git commit -S -m "Release 3.4.0"
+git tag -s v3.4.0 -m "irlingo 3.4.0"
+git push origin master v3.4.0
 ```
 
 GitHub Actions then runs all tests, builds the packages for every Raspberry Pi architecture, the archive of all remotes (`irlingo-remotes-<version>.tar.gz`) and the API documentation (`irlingo-api-docs-<version>.tar.gz`), and publishes them with checksums as a GitHub release.
@@ -179,4 +179,4 @@ and add the same public key to your GitHub account as a **signing key**
 `gh ssh-key add ~/.ssh/id_ed25519.pub --type signing`). To check a signature
 locally, list your key in an allowed signers file
 (`git config --global gpg.ssh.allowedSignersFile ~/.ssh/allowed_signers`) and
-run `git verify-tag v3.3.1`.
+run `git verify-tag v3.4.0`.

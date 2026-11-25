@@ -163,7 +163,7 @@ jobs:
           -DCMAKE_INSTALL_PREFIX=/usr
           -DIRLINGO_GPIO_BACKEND=lirc
           -DIRLINGO_STATIC=ON
-          -DIRLINGO_REMOTES=native
+          -DIRLINGO_REMOTES=all
           -DIRLINGO_PACKAGE_ARCH=${{ matrix.arch }}
           -DCMAKE_CROSSCOMPILING_EMULATOR=$(command -v ${{ matrix.qemu }})
 
@@ -179,6 +179,15 @@ jobs:
         run: |
           file build/irlingo
           cd build && cpack
+
+      # The packages contain every remote in conf/remotes
+      - name: Check the packages' remotes
+        run: |
+          expected=$(find conf/remotes -name '*.json' | wc -l)
+          deb=$(dpkg-deb -c build/irlingo_*_${{ matrix.arch }}.deb | grep -c '/conf/remotes/.*\.json$')
+          tgz=$(tar -tzf build/irlingo-*-${{ matrix.arch }}.tar.gz | grep -c '/conf/remotes/.*\.json$')
+          echo "remotes: $expected in conf/remotes, $deb in the .deb, $tgz in the .tar.gz"
+          test "$deb" -eq "$expected" && test "$tgz" -eq "$expected"
 
       - uses: actions/upload-artifact@v4
         with:

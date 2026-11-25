@@ -1,9 +1,10 @@
 #!/bin/sh
 # irlingo-remotes: choose which remote configurations an installation of irlingo has.
 #
-# Release packages contain only irlingo's own remotes. Every release also has
+# Release packages contain every remote since 3.4.0. Every release also has
 # irlingo-remotes-<version>.tar.gz with all remotes, including those converted
-# from the LIRC remote database. This tool installs remotes from it.
+# from the LIRC remote database. This tool installs remotes from it on
+# installations with fewer, e.g. built from source with IRLINGO_REMOTES.
 
 set -e
 

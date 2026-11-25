@@ -13,12 +13,9 @@ irlingo --remote sony/RM-ED011 --feature key=KEY_POWER
 irlingo --remote hvac_panasonic --feature temperature=21 --feature mode=HEAT
 ```
 
-## What's new in 3.3.1
+## What's new in 3.4.0
 
-Documentation only; the code and the remotes are those of 3.3.0:
-
-- Examples for the air conditioner remotes with a `power` feature (all but `hvac_panasonic`), e.g. `daikin/hvac_daikin`, in [How to use](#how-to-use) and [Integration](doc/integration.md).
-- The documentation brought up to date with 3.3.0's chips and remotes.
+- **All remotes in the release packages**: besides the 47 air conditioner remotes, the packages now contain the 3000+ remotes converted from the LIRC database, for TVs, receivers, set-top boxes and more. `irlingo-remotes add` is no longer needed after installing. The packages are about 2 MB to download, about 21 MB installed. See [Remotes](#remotes).
 
 ## What's new in 3.3.0
 
@@ -45,7 +42,7 @@ The [documentation](doc/README.md) has a guide for each step:
 
 ## Table of contents
 
-  * [What's new in 3.3.1](#whats-new-in-331)
+  * [What's new in 3.4.0](#whats-new-in-340)
   * [What's new in 3.3.0](#whats-new-in-330)
   * [Documentation](#documentation)
   * [Features](#features)
@@ -134,15 +131,15 @@ Every [release](https://github.com/mortenmathiasen/irlingo/releases) has ready-m
 
 If you are unsure, run `dpkg --print-architecture` on the Pi: `arm64` needs the `aarch64` package, and `armhf` needs `armv6` or `armv7` (`armv6` works on every model).
 
-The packages contain irlingo's own remotes. Add the remotes you need from the LIRC database afterwards with `irlingo-remotes`, see [Choosing the remotes of an installation](#choosing-the-remotes-of-an-installation).
+The packages contain all remotes, irlingo's own air conditioner remotes and those converted from the LIRC database (about 21 MB installed), see [Remotes](#remotes).
 
 Install the Debian package, e.g. for a Pi Zero W:
 ```
-sudo apt install ./irlingo_3.3.1_armv6.deb
+sudo apt install ./irlingo_3.4.0_armv6.deb
 ```
 or extract the tarball into `/`:
 ```
-sudo tar -xzf irlingo-3.3.1-armv6.tar.gz -C / --strip-components=1
+sudo tar -xzf irlingo-3.4.0-armv6.tar.gz -C / --strip-components=1
 ```
 
 Then enable the kernel IR transmitter as described below.
@@ -257,9 +254,9 @@ GitHub Actions runs the tests for all three backends, with AddressSanitizer and 
 
 To release, update `VERSION` in `CMakeLists.txt`, commit, and push a matching signed tag (setting up a signing key is described in [Development](doc/development.md#releases)):
 ```
-git commit -S -m "Release 3.3.1"
-git tag -s v3.3.1 -m "irlingo 3.3.1"
-git push origin master v3.3.1
+git commit -S -m "Release 3.4.0"
+git tag -s v3.4.0 -m "irlingo 3.4.0"
+git push origin master v3.4.0
 ```
 GitHub Actions then runs all tests, builds the packages for every Raspberry Pi architecture, the archive of all remotes (`irlingo-remotes-<version>.tar.gz`) and the API documentation (`irlingo-api-docs-<version>.tar.gz`), and publishes them with checksums as a GitHub release.
 
@@ -293,7 +290,7 @@ The command line options and remote files of PIIR 1.x still work. These things c
 * **Build system.** irlingo is built with CMake instead of autotools: `./autogen.sh && ./configure && make && sudo make install` becomes `cmake -B build && cmake --build build && sudo cmake --install build`. The default installation prefix is still `/usr/local`.
 * **Transmitter.** PIIR 1.x always used pigpio. PIIR 2 prefers the Linux kernel IR driver, which works on every Raspberry Pi including Pi 5, but needs `dtoverlay=gpio-ir-tx,gpio_pin=17` in `/boot/firmware/config.txt` (see [Compilation](#compilation)). The overlay sets the GPIO pin, so `outpin` in a remote file is not used by this backend. Without the overlay irlingo stops with `Cannot open /dev/lirc0`. To keep using pigpio and `outpin`, build with `-DIRLINGO_GPIO_BACKEND=pigpio` (this does not compile in release 2.0.0; use 2.1.0 or later).
 * **Exit codes and output.** On errors and after `--help`, PIIR 1.x aborted (exit code 134); PIIR 2 exits with 1. The `gpioWaveTxSend OK` line is only printed by the pigpio backend.
-* **Remote locations.** The remotes shipped with irlingo are in manufacturer directories, e.g. `conf/remotes/panasonic/hvac_panasonic.json`. Your own remotes directly in `conf/remotes/` are still found, and `--remote hvac_panasonic` still works. Release packages contain only irlingo's own remotes, the 47 air conditioner remotes; add others with [irlingo-remotes](#choosing-the-remotes-of-an-installation).
+* **Remote locations.** The remotes shipped with irlingo are in manufacturer directories, e.g. `conf/remotes/panasonic/hvac_panasonic.json`. Your own remotes directly in `conf/remotes/` are still found, and `--remote hvac_panasonic` still works. Release packages contain all remotes.
 * **Plugins.** A remote now names its plugin, e.g. `"plugin": "hvac_panasonic"`, or defines its checksums in the remote file, see [Checksums](#checksums). Remote files with neither setting whose path contains `hvac_panasonic` still get the Panasonic checksum, as in PIIR 1.x.
 * **Codes sent.** PIIR 1.x only applied the last `--feature` given; PIIR 2 applies all of them, in the order of the remote file (see [How to use](#how-to-use)). For `hvac_panasonic`, `mode=FAN` now sends the fixed 27 degrees and `option=QUIET`, `option=8` and `option=10` override the fan speed and mode, as the original remote does. The same command can therefore send a different, correct code than PIIR 1.x.
 
@@ -419,7 +416,7 @@ Remotes are JSON files in `conf/remotes/<manufacturer>/`, in the same structure 
 
 ### Choosing the remotes of an installation
 
-The release packages only contain irlingo's own remotes, the 47 air conditioner remotes named `hvac_*`. Each release also has `irlingo-remotes-<version>.tar.gz` with all remotes, and the `irlingo-remotes` command installed with irlingo adds remotes from it to the installation. It downloads the archive of the installed version, or uses one given with `--archive`:
+The release packages contain all remotes. Each release also has `irlingo-remotes-<version>.tar.gz` with all remotes, and the `irlingo-remotes` command installed with irlingo adds remotes from it to an installation that has fewer, e.g. one built from source with `IRLINGO_REMOTES` below. It downloads the archive of the installed version, or uses one given with `--archive`:
 ```
 irlingo-remotes available sony              # remotes in the archive containing "sony"
 sudo irlingo-remotes add sony               # every Sony remote

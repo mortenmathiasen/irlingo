@@ -21,7 +21,7 @@ On a Raspberry Pi with an IR LED on GPIO 17:
 
 ```
 # 1. Install the package for your Pi (see Installation for which one)
-sudo apt install ./irlingo_3.3.1_aarch64.deb
+sudo apt install ./irlingo_3.4.0_aarch64.deb
 
 # 2. Enable the kernel IR transmitter and reboot
 echo 'dtoverlay=gpio-ir-tx,gpio_pin=17' | sudo tee -a /boot/firmware/config.txt

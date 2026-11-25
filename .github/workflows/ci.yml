@@ -330,7 +330,8 @@ jobs:
 
       - uses: home-assistant/actions/hassfest@master
 
-  # HACS's checks of the repository; the icon comes with home-assistant/brands
+  # HACS's checks of the repository, including the icon in
+  # custom_components/irlingo/brand/
   hacs:
     name: HACS
     runs-on: ubuntu-24.04
@@ -338,7 +339,6 @@ jobs:
       - uses: hacs/action@main
         with:
           category: integration
-          ignore: brands
 
   esphome:
     name: ESPHome

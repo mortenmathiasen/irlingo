@@ -110,7 +110,9 @@ ruff format --check custom_components tests/homeassistant tests/test_python_enco
 
 `tools/package_homeassistant.py` packs `irlingo-homeassistant.zip`, the
 integration with every remote, which releases attach and HACS installs
-(`hacs.json`). CI also runs Home Assistant's hassfest and HACS's checks.
+(`hacs.json`). CI also runs Home Assistant's hassfest and HACS's checks. The
+icon Home Assistant shows is `custom_components/irlingo/brand/icon.png` (256 px)
+and `icon@2x.png` (512 px).
 
 ## Code style
 

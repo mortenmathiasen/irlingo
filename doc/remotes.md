@@ -12,8 +12,10 @@
 
 irlingo has more than 3000 remotes from over 500 manufacturers in [conf/remotes](../conf/remotes):
 
-- **irlingo's own air conditioner remotes**, named `hvac_*`: `panasonic/hvac_panasonic`, reverse engineered from the remote, and 46 remotes for the models of [arduino-heatpumpir](#air-conditioners-supported-by-arduino-heatpumpir), listed in [Usage](usage.md#setting-an-air-conditioner). The release packages contain these.
-- **Remotes converted from the [LIRC remote database](https://sourceforge.net/p/lirc-remotes/code/ci/master/tree/remotes)**, for TVs, receivers, set-top boxes, projectors and much more. Each release has them in `irlingo-remotes-<version>.tar.gz`.
+- **irlingo's own air conditioner remotes**, named `hvac_*`: `panasonic/hvac_panasonic`, reverse engineered from the remote, and 46 remotes for the models of [arduino-heatpumpir](#air-conditioners-supported-by-arduino-heatpumpir), listed in [Usage](usage.md#setting-an-air-conditioner).
+- **Remotes converted from the [LIRC remote database](https://sourceforge.net/p/lirc-remotes/code/ci/master/tree/remotes)**, for TVs, receivers, set-top boxes, projectors and much more.
+
+The release packages contain all of them, about 21 MB installed. Each release also has them in `irlingo-remotes-<version>.tar.gz`.
 
 If your device is not among them, make a remote:
 
@@ -25,7 +27,7 @@ If your device is not among them, make a remote:
 
 ## Adding remotes to an installation
 
-`irlingo-remotes`, installed with irlingo, adds remotes from the archive of all remotes to the installation. It downloads the archive of the installed irlingo version from GitHub (and keeps it in `~/.cache/irlingo`), or uses one you downloaded:
+An installation from the release packages already has every remote. `irlingo-remotes`, installed with irlingo, adds remotes from the archive of all remotes to an installation that has fewer, e.g. one built from source with `-DIRLINGO_REMOTES` (see below). It downloads the archive of the installed irlingo version from GitHub (and keeps it in `~/.cache/irlingo`), or uses one you downloaded:
 
 ```
 irlingo-remotes available sony                 # remotes in the archive containing "sony"

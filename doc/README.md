@@ -5,6 +5,7 @@ irlingo (called PIIR before version 3.0.0) sends infrared signals from a Raspber
 | Guide | What it covers |
 |-------|----------------|
 | [Installation](installation.md) | Hardware, release packages, enabling the IR transmitter, building from source, cross compiling, upgrading |
+| [irlingo in Home Assistant](home-assistant.md) | The Home Assistant integration: remotes as climate, button and remote entities, sent through any infrared emitter |
 | [irlingo on ESPHome](esphome.md) | Sending irlingo remotes from an ESP32, ESP8266 or RP2040 with ESPHome, supported chips |
 | [Connecting an IR LED](hardware.md) | Circuits, parts and pins for a Raspberry Pi, an ESP32 or another ESPHome chip, finding the right pins on your board, testing with a visible LED, checking that the LED sends |
 | [Usage](usage.md) | The `irlingo` command: finding a remote, sending keys and air conditioner settings, output, exit codes |

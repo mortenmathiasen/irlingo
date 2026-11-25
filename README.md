@@ -32,6 +32,7 @@ The [documentation](doc/README.md) has a guide for each step:
 * [Installation](doc/installation.md): hardware, packages, enabling the IR transmitter, building from source
 * [Connecting an IR LED](doc/hardware.md): circuits, parts and pins for a Raspberry Pi, an ESP32 or another ESPHome chip
 * [irlingo on ESPHome](doc/esphome.md): sending irlingo remotes from an ESP32, ESP8266 or RP2040
+* [irlingo in Home Assistant](doc/home-assistant.md): the Home Assistant integration, through any infrared emitter
 * [Usage](doc/usage.md): finding a remote, sending keys and air conditioner settings
 * [Managing remotes](doc/remotes.md): adding remotes, converting LIRC files, deriving remotes from recordings
 * [Remote file format](doc/remote-format.md): every setting of a remote, with a worked example
@@ -107,6 +108,7 @@ The tool transmits IR on:
   | ESP32-S3, ESP32-C3, ESP32-C6 | compiled by CI, not yet tested on hardware |
   | RP2040 (e.g. Raspberry Pi Pico W) | compiled by CI, not yet tested on hardware |
   | ESP8266 | compiled by CI, not yet tested; little memory, so only one small remote, see [Supported chips](doc/esphome.md#supported-chips) |
+* any infrared emitter of [Home Assistant](https://www.home-assistant.io/) (ESPHome, Broadlink and others), with the irlingo integration, see [irlingo in Home Assistant](doc/home-assistant.md)
 * more platforms to come
 
 ### Prerequisites
@@ -252,13 +254,13 @@ GitHub Actions runs the tests for all three backends, with AddressSanitizer and 
 
 ### Releases
 
-To release, update `VERSION` in `CMakeLists.txt`, commit, and push a matching signed tag (setting up a signing key is described in [Development](doc/development.md#releases)):
+To release, update `VERSION` in `CMakeLists.txt` and `version` in `custom_components/irlingo/manifest.json`, commit, and push a matching signed tag (setting up a signing key is described in [Development](doc/development.md#releases)):
 ```
 git commit -S -m "Release 3.4.0"
 git tag -s v3.4.0 -m "irlingo 3.4.0"
 git push origin master v3.4.0
 ```
-GitHub Actions then runs all tests, builds the packages for every Raspberry Pi architecture, the archive of all remotes (`irlingo-remotes-<version>.tar.gz`) and the API documentation (`irlingo-api-docs-<version>.tar.gz`), and publishes them with checksums as a GitHub release.
+GitHub Actions then runs all tests, builds the packages for every Raspberry Pi architecture, the archive of all remotes (`irlingo-remotes-<version>.tar.gz`), the API documentation (`irlingo-api-docs-<version>.tar.gz`) and the Home Assistant integration (`irlingo-homeassistant.zip`), and publishes them with checksums as a GitHub release.
 
 ### Upgrading from PIIR 2.x
 

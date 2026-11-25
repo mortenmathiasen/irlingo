@@ -1,0 +1,12 @@
+# Lint settings for the Home Assistant integration and its tests, close to
+# Home Assistant's own: ruff check custom_components tests/homeassistant ...
+line-length = 120
+target-version = "py313"
+
+[lint]
+select = ["B", "E", "F", "I", "SIM", "UP", "W"]
+
+[lint.isort]
+force-sort-within-sections = true
+known-first-party = ["custom_components"]
+combine-as-imports = true

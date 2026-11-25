@@ -292,8 +292,13 @@ jobs:
         with:
           python-version: "3.14"
 
+      # Home Assistant installs the infrared component's library when it loads
+      # it; the tests need it beforehand, in the version Home Assistant pins
       - name: Install Home Assistant's test harness and ruff
-        run: pip install "pytest-homeassistant-custom-component==$PHCC_VERSION" "ruff==$RUFF_VERSION"
+        run: |
+          pip install "pytest-homeassistant-custom-component==$PHCC_VERSION" "ruff==$RUFF_VERSION"
+          manifest=$(python -c "import homeassistant, pathlib; print(pathlib.Path(homeassistant.__file__).parent / 'components/infrared/manifest.json')")
+          pip install $(python -c "import json, sys; print(' '.join(json.load(open(sys.argv[1]))['requirements']))" "$manifest")
 
       - name: Lint
         run: |

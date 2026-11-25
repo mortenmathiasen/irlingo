@@ -180,9 +180,9 @@ The 44 air conditioner remotes for arduino-heatpumpir's models were derived with
 
 Update `VERSION` in `CMakeLists.txt` and `version` in `custom_components/irlingo/manifest.json` (CI fails when they differ), commit, and push a matching signed tag:
 ```
-git commit -S -m "Release 3.4.0"
-git tag -s v3.4.0 -m "irlingo 3.4.0"
-git push origin master v3.4.0
+git commit -S -m "Release 3.5.0"
+git tag -s v3.5.0 -m "irlingo 3.5.0"
+git push origin master v3.5.0
 ```
 
 GitHub Actions then runs all tests, builds the packages for every Raspberry Pi architecture, the archive of all remotes (`irlingo-remotes-<version>.tar.gz`), the API documentation (`irlingo-api-docs-<version>.tar.gz`) and the Home Assistant integration (`irlingo-homeassistant.zip`), and publishes them with checksums as a GitHub release.
@@ -202,4 +202,4 @@ and add the same public key to your GitHub account as a **signing key**
 `gh ssh-key add ~/.ssh/id_ed25519.pub --type signing`). To check a signature
 locally, list your key in an allowed signers file
 (`git config --global gpg.ssh.allowedSignersFile ~/.ssh/allowed_signers`) and
-run `git verify-tag v3.4.0`.
+run `git verify-tag v3.5.0`.

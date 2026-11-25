@@ -13,6 +13,10 @@ irlingo --remote sony/RM-ED011 --feature key=KEY_POWER
 irlingo --remote hvac_panasonic --feature temperature=21 --feature mode=HEAT
 ```
 
+## What's new in 3.5.0
+
+- **Home Assistant integration**, installable with [HACS](https://hacs.xyz/): irlingo's remotes sent through any of Home Assistant's infrared emitters (ESPHome, Broadlink and others). Air conditioners become climate entities, other remotes get a button per key and a remote entity for automations. Its Python encoder sends exactly the codes of the C core, checked for every value of every remote. See [irlingo in Home Assistant](doc/home-assistant.md).
+
 ## What's new in 3.4.0
 
 - **All remotes in the release packages**: besides the 47 air conditioner remotes, the packages now contain the 3000+ remotes converted from the LIRC database, for TVs, receivers, set-top boxes and more. `irlingo-remotes add` is no longer needed after installing. The packages are about 2 MB to download, about 21 MB installed. See [Remotes](#remotes).
@@ -43,6 +47,7 @@ The [documentation](doc/README.md) has a guide for each step:
 
 ## Table of contents
 
+  * [What's new in 3.5.0](#whats-new-in-350)
   * [What's new in 3.4.0](#whats-new-in-340)
   * [What's new in 3.3.0](#whats-new-in-330)
   * [Documentation](#documentation)
@@ -137,11 +142,11 @@ The packages contain all remotes, irlingo's own air conditioner remotes and thos
 
 Install the Debian package, e.g. for a Pi Zero W:
 ```
-sudo apt install ./irlingo_3.4.0_armv6.deb
+sudo apt install ./irlingo_3.5.0_armv6.deb
 ```
 or extract the tarball into `/`:
 ```
-sudo tar -xzf irlingo-3.4.0-armv6.tar.gz -C / --strip-components=1
+sudo tar -xzf irlingo-3.5.0-armv6.tar.gz -C / --strip-components=1
 ```
 
 Then enable the kernel IR transmitter as described below.
@@ -256,9 +261,9 @@ GitHub Actions runs the tests for all three backends, with AddressSanitizer and 
 
 To release, update `VERSION` in `CMakeLists.txt` and `version` in `custom_components/irlingo/manifest.json`, commit, and push a matching signed tag (setting up a signing key is described in [Development](doc/development.md#releases)):
 ```
-git commit -S -m "Release 3.4.0"
-git tag -s v3.4.0 -m "irlingo 3.4.0"
-git push origin master v3.4.0
+git commit -S -m "Release 3.5.0"
+git tag -s v3.5.0 -m "irlingo 3.5.0"
+git push origin master v3.5.0
 ```
 GitHub Actions then runs all tests, builds the packages for every Raspberry Pi architecture, the archive of all remotes (`irlingo-remotes-<version>.tar.gz`), the API documentation (`irlingo-api-docs-<version>.tar.gz`) and the Home Assistant integration (`irlingo-homeassistant.zip`), and publishes them with checksums as a GitHub release.
 

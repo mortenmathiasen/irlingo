@@ -9,7 +9,7 @@
 - [Cross compiling](#cross-compiling)
 - [Where things are installed](#where-things-are-installed)
 - [Uninstalling](#uninstalling)
-- [Upgrading to 3.4.0](#upgrading-to-340)
+- [Upgrading to 3.4.0 and 3.5.0](#upgrading-to-340-and-350)
 - [Upgrading to 3.3.0 and 3.3.1](#upgrading-to-330-and-331)
 - [Upgrading from PIIR 2.x](#upgrading-from-piir-2x)
 - [Upgrading from PIIR 1.x](#upgrading-from-piir-1x)
@@ -51,11 +51,11 @@ If you are unsure, run `dpkg --print-architecture` on the Pi: `arm64` needs the 
 
 Download the package from the release page and install it, e.g. on a 64-bit Pi:
 ```
-sudo apt install ./irlingo_3.4.0_aarch64.deb
+sudo apt install ./irlingo_3.5.0_aarch64.deb
 ```
 Or, without `apt`, extract the tarball into `/`:
 ```
-sudo tar -xzf irlingo-3.4.0-aarch64.tar.gz -C / --strip-components=1
+sudo tar -xzf irlingo-3.5.0-aarch64.tar.gz -C / --strip-components=1
 ```
 
 The packages install `irlingo`, `irlingo-remotes` and irlingo's own remotes: the 47 air conditioner remotes, e.g. `panasonic/hvac_panasonic` or `daikin/hvac_daikin`. The more than 3000 remotes converted from the LIRC database are not included; add the ones you need with `irlingo-remotes`, see [Managing remotes](remotes.md#adding-remotes-to-an-installation).
@@ -188,12 +188,14 @@ xargs sudo rm -f < build/install_manifest.txt
 ```
 removes them. Remove the overlay line from `/boot/firmware/config.txt` if you no longer need the transmitter.
 
-## Upgrading to 3.4.0
+## Upgrading to 3.4.0 and 3.5.0
 
 Install the new package as above, over the old one. It installs every remote,
 so remotes you added with `irlingo-remotes add` are now part of the package,
 and you need not add any again. The `irlingo` command, its options and the
 remote file format are unchanged, and nothing needs to be configured again.
+3.5.0 adds the [Home Assistant integration](home-assistant.md); upgrading from
+3.4.0 to it changes nothing on the Pi.
 
 ## Upgrading to 3.3.0 and 3.3.1
 

@@ -277,6 +277,69 @@ jobs:
       - id: deployment
         uses: actions/deploy-pages@v4
 
+  # The Home Assistant integration: lint, its tests with Home Assistant's test
+  # harness, and the zip HACS installs from releases
+  homeassistant:
+    name: Home Assistant integration
+    runs-on: ubuntu-24.04
+    env:
+      PHCC_VERSION: 0.13.375
+      RUFF_VERSION: 0.17.6
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.14"
+
+      # Home Assistant installs the infrared component's library when it loads
+      # it; the tests need it beforehand, in the version Home Assistant pins
+      - name: Install Home Assistant's test harness and ruff
+        run: |
+          pip install "pytest-homeassistant-custom-component==$PHCC_VERSION" "ruff==$RUFF_VERSION"
+          manifest=$(python -c "import homeassistant, pathlib; print(pathlib.Path(homeassistant.__file__).parent / 'components/infrared/manifest.json')")
+          pip install $(python -c "import json, sys; print(' '.join(json.load(open(sys.argv[1]))['requirements']))" "$manifest")
+
+      - name: Lint
+        run: |
+          paths="custom_components tests/homeassistant tests/test_python_encoder.py tools/package_homeassistant.py"
+          ruff check $paths
+          ruff format --check $paths
+
+      - name: Tests
+        run: python -m pytest tests/homeassistant
+
+      # Fails when custom_components/irlingo/manifest.json has another version
+      - name: Package for HACS
+        run: |
+          version=$(sed -n '/^project(/,/)/s/^ *VERSION \([0-9.]*\).*/\1/p' CMakeLists.txt)
+          python tools/package_homeassistant.py --version "$version" --out irlingo-homeassistant.zip
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: irlingo-homeassistant
+          path: irlingo-homeassistant.zip
+          if-no-files-found: error
+
+  # Home Assistant's own checks of the integration
+  hassfest:
+    name: hassfest
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: home-assistant/actions/hassfest@master
+
+  # HACS's checks of the repository, including the icon in
+  # custom_components/irlingo/brand/
+  hacs:
+    name: HACS
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: hacs/action@main
+        with:
+          category: integration
+
   esphome:
     name: ESPHome
     runs-on: ubuntu-24.04
@@ -337,7 +400,7 @@ jobs:
   release:
     name: Release
     if: startsWith(github.ref, 'refs/tags/v')
-    needs: [test, test-gpiod, coverage, rpi, remotes, esphome, format, docs]
+    needs: [test, test-gpiod, coverage, rpi, remotes, esphome, format, docs, homeassistant, hassfest, hacs]
     runs-on: ubuntu-24.04
     permissions:
       contents: write
@@ -352,7 +415,8 @@ jobs:
             exit 1
           fi
 
-      # Only the packages and the API documentation, not e.g. the coverage report
+      # Only the packages, the API documentation and the Home Assistant
+      # integration, not e.g. the coverage report
       - uses: actions/download-artifact@v4
         with:
           pattern: irlingo-*
@@ -368,6 +432,7 @@ jobs:
           test "$(ls *.deb | wc -l)" -eq 3
           test "$(ls irlingo-remotes-*.tar.gz | wc -l)" -eq 1
           test "$(ls irlingo-api-docs-*.tar.gz | wc -l)" -eq 1
+          test "$(ls irlingo-homeassistant.zip | wc -l)" -eq 1
 
       - name: Checksums
         run: cd dist && sha256sum * | tee SHA256SUMS

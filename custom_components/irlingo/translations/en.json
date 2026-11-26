@@ -1,0 +1,40 @@
+{
+  "config": {
+    "abort": {
+      "no_infrared_emitters": "No infrared emitter found. Set up an integration that provides one first, e.g. an ESPHome device with an IR transmitter or a Broadlink remote."
+    },
+    "error": {
+      "cannot_load": "This remote cannot be loaded."
+    },
+    "step": {
+      "user": {
+        "title": "Add a remote",
+        "description": "Choose the manufacturer of the device you want to control.",
+        "data": {
+          "manufacturer": "Manufacturer"
+        }
+      },
+      "remote": {
+        "title": "{manufacturer} remote",
+        "description": "Choose the remote, and the infrared emitter that sends its codes.",
+        "data": {
+          "remote": "Remote",
+          "infrared_emitter_entity_id": "Infrared emitter",
+          "name": "Name"
+        },
+        "data_description": {
+          "remote": "Air conditioner remotes are named hvac_*.",
+          "infrared_emitter_entity_id": "The infrared emitter entity that sends the codes.",
+          "name": "Optional; the remote's name when left empty."
+        }
+      }
+    }
+  },
+  "entity": {
+    "remote": {
+      "remote": {
+        "name": "Remote"
+      }
+    }
+  }
+}

@@ -358,6 +358,18 @@ if(Python3_FOUND)
     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
   set_tests_properties(ir2irlingo.unit PROPERTIES
     ENVIRONMENT PYTHONPATH=${PROJECT_SOURCE_DIR}/tools)
+  # The Home Assistant integration's Python encoder: every test vector, and
+  # the same codes and pulses as the C core (encode_reference) for every
+  # feature value. A cross-compiled reference cannot run on the build host.
+  irlingo_test_executable(encode_reference)
+  if(CMAKE_CROSSCOMPILING)
+    add_test(NAME python_encoder
+      COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/test_python_encoder.py)
+  else()
+    add_test(NAME python_encoder
+      COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/test_python_encoder.py
+        --reference $<TARGET_FILE:encode_reference>)
+  endif()
   # ir2irlingo: derive the Panasonic remote again from the codes it sends
   irlingo_test_executable(encode_remote)
   add_test(NAME ir2irlingo.panasonic

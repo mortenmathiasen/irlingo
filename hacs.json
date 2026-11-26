@@ -1,0 +1,7 @@
+{
+  "name": "irlingo",
+  "homeassistant": "2026.10.0",
+  "zip_release": true,
+  "filename": "irlingo-homeassistant.zip",
+  "render_readme": true
+}

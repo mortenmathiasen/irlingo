@@ -89,6 +89,31 @@ tests/esphome/check.sh --compile
 The component's C++ and Python files are only compiled by ESPHome, not by the
 CMake build.
 
+## Home Assistant integration
+
+The [integration](home-assistant.md) in `custom_components/irlingo/` encodes
+with `encoder.py`, a Python port of the portable core. CTest's `python_encoder`
+(`tests/test_python_encoder.py`, standard library only) checks it: every test
+vector of every remote, and with `tests/encode_reference.c` the same code and
+pulses as the C core for the template and every value of every feature, also
+toggled. A change to the C core needs the same change in `encoder.py`.
+
+The integration's own tests use Home Assistant's test harness with a fake
+infrared emitter. They need Python 3.14:
+
+```
+pip install pytest-homeassistant-custom-component ruff
+python -m pytest tests/homeassistant
+ruff check custom_components tests/homeassistant tests/test_python_encoder.py tools/package_homeassistant.py
+ruff format --check custom_components tests/homeassistant tests/test_python_encoder.py tools/package_homeassistant.py
+```
+
+`tools/package_homeassistant.py` packs `irlingo-homeassistant.zip`, the
+integration with every remote, which releases attach and HACS installs
+(`hacs.json`). CI also runs Home Assistant's hassfest and HACS's checks. The
+icon Home Assistant shows is `custom_components/irlingo/brand/icon.png` (256 px)
+and `icon@2x.png` (512 px).
+
 ## Code style
 
 The C and C++ code follows ESPHome's style, set by `.clang-format` (taken from
@@ -140,7 +165,7 @@ to releases. The documentation of `master` is published on GitHub Pages:
 
 ## Continuous integration
 
-GitHub Actions runs the tests for all three backends, with AddressSanitizer and UndefinedBehaviorSanitizer, measures coverage, runs the tests of the `armv6`, `armv7` and `aarch64` builds under qemu, checks the formatting with clang-format, builds the API documentation (and publishes that of `master` on GitHub Pages), and runs
+GitHub Actions runs the tests for all three backends, with AddressSanitizer and UndefinedBehaviorSanitizer, measures coverage, runs the tests of the `armv6`, `armv7` and `aarch64` builds under qemu, checks the formatting with clang-format, builds the API documentation (and publishes that of `master` on GitHub Pages), tests the Home Assistant integration and runs hassfest and HACS's checks on it, and runs
 `tests/esphome/check.sh --compile` with the ESPHome version given in the
 workflow, followed by `tools/clang-tidy.py`. A separate workflow converts the LIRC database again with `tools/lirc2irlingo.py` and fails if `conf/remotes` differs from the result, and compares the converter with LIRC's own `irsimsend`.
 
@@ -155,14 +180,14 @@ The 44 air conditioner remotes for arduino-heatpumpir's models were derived with
 
 ## Releases
 
-Update `VERSION` in `CMakeLists.txt`, commit, and push a matching signed tag:
+Update `VERSION` in `CMakeLists.txt` and `version` in `custom_components/irlingo/manifest.json` (CI fails when they differ), commit, and push a matching signed tag:
 ```
-git commit -S -m "Release 3.4.0"
-git tag -s v3.4.0 -m "irlingo 3.4.0"
-git push origin master v3.4.0
+git commit -S -m "Release 3.5.0"
+git tag -s v3.5.0 -m "irlingo 3.5.0"
+git push origin master v3.5.0
 ```
 
-GitHub Actions then runs all tests, builds the packages for every Raspberry Pi architecture, the archive of all remotes (`irlingo-remotes-<version>.tar.gz`) and the API documentation (`irlingo-api-docs-<version>.tar.gz`), and publishes them with checksums as a GitHub release.
+GitHub Actions then runs all tests, builds the packages for every Raspberry Pi architecture, the archive of all remotes (`irlingo-remotes-<version>.tar.gz`), the API documentation (`irlingo-api-docs-<version>.tar.gz`) and the Home Assistant integration (`irlingo-homeassistant.zip`), and publishes them with checksums as a GitHub release.
 
 The release commit and tag are signed, so GitHub shows them as verified. This
 needs a signing key: with an SSH key, set git up once
@@ -179,4 +204,4 @@ and add the same public key to your GitHub account as a **signing key**
 `gh ssh-key add ~/.ssh/id_ed25519.pub --type signing`). To check a signature
 locally, list your key in an allowed signers file
 (`git config --global gpg.ssh.allowedSignersFile ~/.ssh/allowed_signers`) and
-run `git verify-tag v3.4.0`.
+run `git verify-tag v3.5.0`.

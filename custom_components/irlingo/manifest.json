@@ -1,0 +1,13 @@
+{
+  "domain": "irlingo",
+  "name": "irlingo",
+  "codeowners": ["@mortenmathiasen"],
+  "config_flow": true,
+  "dependencies": ["infrared"],
+  "documentation": "https://github.com/mortenmathiasen/irlingo/blob/master/doc/home-assistant.md",
+  "integration_type": "device",
+  "iot_class": "assumed_state",
+  "issue_tracker": "https://github.com/mortenmathiasen/irlingo/issues",
+  "requirements": [],
+  "version": "3.5.0"
+}

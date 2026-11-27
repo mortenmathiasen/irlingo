@@ -9,7 +9,7 @@ connect one to a Raspberry Pi or an ESP32.
   - [LED switched by a transistor: recommended](#led-switched-by-a-transistor-recommended)
   - [More range](#more-range)
 - [Raspberry Pi](#raspberry-pi)
-- [ESP32](#esp32)
+- [ESP32 and other ESPHome chips](#esp32-and-other-esphome-chips)
 - [Finding the right pins](#finding-the-right-pins)
   - [On a Raspberry Pi](#on-a-raspberry-pi)
   - [On an ESP32](#on-an-esp32)

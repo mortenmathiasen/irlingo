@@ -1,5 +1,9 @@
 # Usage
 
+This guide is about the `irlingo` command on a Raspberry Pi. In Home Assistant
+see [irlingo in Home Assistant](home-assistant.md), on an ESP32
+[irlingo on ESPHome](esphome.md).
+
 - [Command line](#command-line)
 - [Choosing a remote](#choosing-a-remote)
 - [Features: keys and settings](#features-keys-and-settings)

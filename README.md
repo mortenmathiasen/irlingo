@@ -2,11 +2,17 @@
 
 [![CI](https://github.com/mortenmathiasen/irlingo/actions/workflows/ci.yml/badge.svg)](https://github.com/mortenmathiasen/irlingo/actions/workflows/ci.yml)
 
-irlingo (formerly PIIR) is a command line tool to transmit IR-signals like remote controls do. irlingo is created as a generic tool that supports configuration and transmission of any signal, eg. including long aircondition signals.
+irlingo (formerly PIIR) sends infrared signals like remote controls do, to TVs, receivers, air conditioners, heat pumps and anything else with an IR receiver. It comes with more than 3000 remotes, 47 of them for air conditioners and heat pumps, and supports any signal, including long air conditioner codes. The same remotes and encoder run as:
+
+- **a Home Assistant integration**, sending through an ESP32, a Broadlink or any other infrared emitter Home Assistant has,
+- **an ESPHome component** on an ESP32, with or without Home Assistant,
+- **a command line tool** on a Raspberry Pi, for scripts, cron and other software.
+
+[Getting started](doc/getting-started.md) helps you choose between them.
 
 ![alt text](https://github.com/mortenmathiasen/irlingo/blob/master/doc/remote-sommerhus.png?raw=true)
 
-Examples:
+Examples with the command line tool:
 ```
 irlingo --remote sony/RM-ED011 --feature key=KEY_POWER
 
@@ -33,6 +39,7 @@ All changes: [releases](https://github.com/mortenmathiasen/irlingo/releases).
 
 The [documentation](doc/README.md) has a guide for each step:
 
+* [Getting started](doc/getting-started.md): choosing the hardware (ESP32 or Raspberry Pi) and what controls it (Home Assistant or not), then where to install
 * [Installation](doc/installation.md): hardware, packages, enabling the IR transmitter, building from source
 * [Connecting an IR LED](doc/hardware.md): circuits, parts and pins for a Raspberry Pi, an ESP32 or another ESPHome chip
 * [irlingo on ESPHome](doc/esphome.md): sending irlingo remotes from an ESP32, ESP8266 or RP2040
@@ -57,7 +64,8 @@ The [documentation](doc/README.md) has a guide for each step:
     + [Supported systems](#supported-systems)
     + [Supported hardware](#supported-hardware)
     + [Prerequisites](#prerequisites)
-  * [Getting Started](#getting-started)
+  * [Getting started](#getting-started)
+  * [Raspberry Pi: installing the command line tool](#raspberry-pi-installing-the-command-line-tool)
     + [Prebuilt packages](#prebuilt-packages)
     + [Compilation](#compilation)
     + [Installation](#installation)
@@ -119,13 +127,28 @@ The tool transmits IR on:
 
 ### Prerequisites
 
-To be able to transmit IR signal you need an IR led, either:
+To be able to transmit IR signal you need an infrared emitter Home Assistant already has, or an IR led on an ESP32 or Raspberry Pi, either:
 * build the electronics yourself, see [Connecting an IR LED](doc/hardware.md) for the circuit, parts and pins
 * apply an premade pHAT, eg. [ANAVI Infrared pHAT](https://anavi.technology/)
 
-## Getting Started
+## Getting started
 
-You need to identify a device you want to control by IR-signals, e.g. an airconditioner, a TV or similar.
+You need to identify a device you want to control by IR-signals, e.g. an airconditioner, a TV or similar. Then choose in two steps, as [Getting started](doc/getting-started.md) describes in detail:
+
+1. **The hardware that sends:** an ESP32 with an IR LED (the usual choice), an infrared emitter Home Assistant already has (e.g. Broadlink), or a Raspberry Pi with an IR LED.
+2. **What controls it:**
+
+   | Choose | Hardware | Install with |
+   |--------|----------|--------------|
+   | Home Assistant, with the integration | an ESP32, or any emitter Home Assistant has | [Setting up an infrared emitter](doc/home-assistant.md#setting-up-an-infrared-emitter), then [irlingo in Home Assistant](doc/home-assistant.md) |
+   | Home Assistant, or the ESP32 on its own, with the ESPHome component | an ESP32 | [Connecting an IR LED](doc/hardware.md#esp32-and-other-esphome-chips), then [irlingo on ESPHome](doc/esphome.md) |
+   | Scripts, cron, Node-RED and other software, with the command line tool | a Raspberry Pi | [Connecting an IR LED](doc/hardware.md#raspberry-pi), then [Installation](doc/installation.md) or the section below |
+
+   [The ESPHome component or the integration?](doc/home-assistant.md#the-esphome-component-or-the-integration) compares the two Home Assistant approaches. For a device in another place, e.g. a summer house, see [An ESP32 in another place](doc/remote-location.md).
+
+## Raspberry Pi: installing the command line tool
+
+The rest of this section is about the command line tool on a Raspberry Pi; [Installation](doc/installation.md) has the same in more detail.
 
 ### Prebuilt packages
 

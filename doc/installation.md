@@ -1,5 +1,10 @@
 # Installation
 
+This guide installs the `irlingo` command on a Raspberry Pi. For an ESP32 see
+[irlingo on ESPHome](esphome.md), for Home Assistant
+[irlingo in Home Assistant](home-assistant.md), and to choose between them
+[Getting started](getting-started.md).
+
 - [Hardware](#hardware)
 - [Choosing a transmitter backend](#choosing-a-transmitter-backend)
 - [Installing a release package](#installing-a-release-package)

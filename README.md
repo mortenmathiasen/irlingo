@@ -36,7 +36,8 @@ The [documentation](doc/README.md) has a guide for each step:
 * [Installation](doc/installation.md): hardware, packages, enabling the IR transmitter, building from source
 * [Connecting an IR LED](doc/hardware.md): circuits, parts and pins for a Raspberry Pi, an ESP32 or another ESPHome chip
 * [irlingo on ESPHome](doc/esphome.md): sending irlingo remotes from an ESP32, ESP8266 or RP2040
-* [irlingo in Home Assistant](doc/home-assistant.md): the Home Assistant integration, through any infrared emitter
+* [irlingo in Home Assistant](doc/home-assistant.md): the Home Assistant integration, through any infrared emitter, and which to choose
+* [An ESP32 in another place](doc/remote-location.md): an ESP32 on another network, e.g. a summer house, through WireGuard
 * [Usage](doc/usage.md): finding a remote, sending keys and air conditioner settings
 * [Managing remotes](doc/remotes.md): adding remotes, converting LIRC files, deriving remotes from recordings
 * [Remote file format](doc/remote-format.md): every setting of a remote, with a worked example

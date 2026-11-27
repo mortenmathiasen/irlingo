@@ -13,6 +13,11 @@ irlingo 3.3.0 adds builds for the ESP32-S3, -C3, -C6, ESP8266 and RP2040 (see
 [Supported chips](#supported-chips)), and 44 more air conditioner remotes, 47
 in all, which the climate platform maps without configuration.
 
+Home Assistant can also send irlingo's remotes itself, through an ESP32 that
+only has an IR transmitter: see [irlingo in Home Assistant](home-assistant.md),
+and [The ESPHome component or the integration?](home-assistant.md#the-esphome-component-or-the-integration)
+for which to choose.
+
 - [Requirements](#requirements)
 - [Supported chips](#supported-chips)
 - [Configuration](#configuration)
@@ -21,6 +26,8 @@ in all, which the climate platform maps without configuration.
 - [Air conditioners](#air-conditioners)
 - [Remotes](#remotes)
 - [Toggle bits](#toggle-bits)
+- [Without Home Assistant](#without-home-assistant)
+- [With the Home Assistant integration](#with-the-home-assistant-integration)
 - [Memory and limits](#memory-and-limits)
 - [Troubleshooting](#troubleshooting)
 
@@ -256,6 +263,76 @@ on every other press. The component remembers which code is next in the ESP32's
 flash, so it survives restarts and reflashing. ESPHome writes such values to
 flash at most once a minute (its `preferences: flash_write_interval`), so a press
 just before a power cut can be forgotten.
+
+## Without Home Assistant
+
+The remotes are in the firmware and the ESP32 builds the codes itself, so
+irlingo needs neither Home Assistant nor a network connection to send. Some
+ways to use it on its own:
+
+A web page on the ESP32, at `http://<the ESP32's address>/`, with its climate
+entities and buttons:
+
+```yaml
+web_server:
+  port: 80
+```
+
+A schedule, here heating at 21 °C every Friday at 16:00. Once the clock is set
+it keeps running without a network connection:
+
+```yaml
+time:
+  - platform: sntp
+    id: sntp_time
+    on_time:
+      - days_of_week: FRI
+        hours: 16
+        minutes: 0
+        seconds: 0
+        then:
+          - irlingo.send:
+              remote_id: aircon
+              features:
+                mode: HEAT
+                temperature: "21"
+```
+
+A push button between a GPIO pin and GND:
+
+```yaml
+binary_sensor:
+  - platform: gpio
+    pin:
+      number: GPIO13
+      mode: INPUT_PULLUP
+      inverted: true
+    name: Air conditioner off
+    on_press:
+      - irlingo.send:
+          remote_id: aircon
+          features:
+            mode: "OFF"
+```
+
+ESPHome's [MQTT client](https://esphome.io/components/mqtt/) can replace
+`api:` to control it from other systems, e.g. Node-RED.
+
+## With the Home Assistant integration
+
+The [Home Assistant integration](home-assistant.md) sends irlingo's remotes
+from Home Assistant through an infrared emitter entity. ESPHome's `infrared`
+emitter can share the component's `remote_transmitter`, so one ESP32 does both:
+
+```yaml
+infrared:
+  - platform: ir_rf_proxy
+    name: IR emitter
+    remote_transmitter_id: ir_tx
+```
+
+See [The ESPHome component or the integration?](home-assistant.md#the-esphome-component-or-the-integration)
+for which remotes to put where.
 
 ## Memory and limits
 

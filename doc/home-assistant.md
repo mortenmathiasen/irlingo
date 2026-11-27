@@ -80,12 +80,11 @@ adding a remote.
 
 ## Installing
 
-With [HACS](https://hacs.xyz/):
+With [HACS](https://hacs.xyz/), which Home Assistant 2026.11 and newer have
+built in as the Marketplace:
 
-1. HACS → ⋮ → Custom repositories: add `https://github.com/mortenmathiasen/irlingo`
-   with the type *Integration*.
-2. Search for *irlingo* in HACS and download it.
-3. Restart Home Assistant.
+1. Search for *irlingo* in HACS and download it.
+2. Restart Home Assistant.
 
 Without HACS, download `irlingo-homeassistant.zip` from the
 [latest release](https://github.com/mortenmathiasen/irlingo/releases/latest),
